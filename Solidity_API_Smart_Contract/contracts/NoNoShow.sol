@@ -40,7 +40,7 @@ contract NoNoShow{
   mapping(string=>books[]) compBooks;// c.f.) 각 업체의 최근 예약 리스트를 갖고 있는 DB
   // 이벤트 함수들 (예약 혹은 예약 확인 시 프론트엔드로 정보를 전달한다.)
   event alertToComp(string keyID,string compID,uint32 date, uint32 time);
-  event alertToCust(string memory bookID, bool memory ack);
+  event alertToCust(string keyID, bool ack);
   // 고객
   function custSignIn(string memory name,string memory phoneNumber,string memory id, string memory pw) public returns(bool){
 
