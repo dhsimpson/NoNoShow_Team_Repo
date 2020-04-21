@@ -39,8 +39,8 @@ contract NoNoShow{
   mapping(string=>books[]) LedgerDB;// 모든 예약기록을 담아 두는 핵심 DB
   mapping(string=>books[]) compBooks;// c.f.) 각 업체의 최근 예약 리스트를 갖고 있는 DB
   // 이벤트 함수들 (예약 혹은 예약 확인 시 프론트엔드로 정보를 전달한다.)
-  event alertToComp(string keyID,string compID,uint32 date, uint32 time);
-  event alertToCust(string keyID, bool ack);
+  event alertToComp(string keyID,string compID,bytes32 bookID, uint32 date, uint32 time);
+  event alertToCust(string keyID,bytes32 bookID, bool ack);
   // 고객
   function custSignIn(string memory name,string memory phoneNumber,string memory id, string memory pw) public returns(bool){
 
@@ -49,7 +49,7 @@ contract NoNoShow{
 
   }
   function book(string memory keyID,string memory compID,uint32 memory date, uint32 memory time)public{
-    alertToComp(keyID,compID,date,time);
+    alertToComp(keyID,compID,bookID,date,time);
   }
   function checkBook(string memory keyID) public view returns(books[]){ // 예약됐는지 확인
 
@@ -66,10 +66,10 @@ contract NoNoShow{
   function bookList(string memory compID,uint32 memory date) public view returns(books[] memory){ // 업체 ID와 날짜로 그날의 예약 리스트 뽑아오기
 
   }
-  function ackBook(string memory bookID, bool memory ack) public{
-    alertToCust(bookID,ack);
+  function ackBook(string memory keyID, bytes32 memory bookID, bool memory ack) public{
+    alertToCust(keyID, bookID, ack);
   }
-  function resBook(string memory bookID, bool memory isShow) public{ // 고객이 예약시간에 왔는지 안왔는지 확인
+  function resBook(bytes32 memory bookID, bool memory isShow) public{ // 고객이 예약시간에 왔는지 안왔는지 확인
 
   }
   function checkUser(string memory phoneNumber) public view returns(books[] memory){ // 고객의 최근 노쇼 기록을 확인

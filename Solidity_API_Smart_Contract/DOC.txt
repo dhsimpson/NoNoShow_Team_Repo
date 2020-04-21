@@ -1,0 +1,31 @@
+구조체
+books // 하나의 예약 단위, 매장,고객,시간 등을 저장한다. c.f) bookID는 예약 내역을 찾기 쉽게 하기 위함이다. books 구조체를 bookID와 mapping(bookID=>struct) 로 바꿀 계획이다.
+custDB // 고객 데이터
+compDB // 업체 데이터
+
+변수
+일반 변수
+address payable creator // 스마트 컨트랙트 생성자. 고객과 이더를 주고받는다.
+DB 변수
+//추가할 변수 : 1. 고객 회원 DB, 2. 업체 회원 DB
+mapping(string=>books[]) LedgerDB // 예약 장부 DB push Only, "회원고유코드" => 예약내역
+mapping(string=>books[]) compBooks // 업체별  최근 예약 장부(임시 장부이다.) DB push & pop, "업체고유코드" => 예약내역
+
+함수
+event 함수
+alertToComp(string keyID,string compID,uint32 date, uint32 time) // 고객이 어플을 통해 예약하면 업체에게 알림이 간다. 업체는 자사의 업체 고유 코드와 일치하는 경우에만 예약을 열람, 예약 수락/거부 할 수 있다.
+alertToCust(string keyID, bool ack) // 업체가 어플을 통해 예약을 수락하면 고객에게 알림이 간다. 고객은 본인의 회원고유코드와 일치하는 경우에만 예약 결과를 열람할 수 있다.
+고객 함수
+custSignIn(string memory name,string memory phoneNumber,string memory id, string memory pw) public returns(bool)// 고객 회원 가입 
+custLogIn(string memory id, string memory pw) public view returns(string keyID,bool pass) // 고객 로그인 함수, 회원고유코드를 반환 받는다.
+book(string memory keyID,string memory compID,uint32 memory date, uint32 memory time)public // 고객 예약 함수, 예약을 하면 업체에게 알람이 간다.
+checkBook(string memory keyID) public view returns(books[]) // 고객의 고유코드로 최근 예약 기록을 확인할 수 있다.
+함수.
+업체 함수
+compSignIn(string memory name,string memory phoneNumber,string memory addr, string memory id, string memory pw) public returns(bool) // 업체 회원 가입
+compLogIn() public view returns(bool pass) // 업체 로그인, 업체 고유코드를 반환 받는다.
+bookList(string memory compID,uint32 memory date) public view returns(books[] memory) // 업체고유코드로 date와 알맞은 날짜의 예약 내역을 불러온다.
+ackBook(bytes32 memory bookID, bool memory ack) public // 고객의 예약 알림이 왔을 때 예약 수락/거부 여부 함수. 함수 실행 시 고객에게 알림이 간다.
+resBook(bytes32 memory bookID, bool memory isShow) public // 고객이 예약 시간에 왔는지를(노쇼 여부) 판단하는 함수 bookID를 이용해 빠르게 찾는다.
+checkUser(string memory phoneNumber) public view returns(books[] memory) // 고객의 최근 예약 이력을 확인할 수 있다.
+callBook(string memory keyID,string memory compID,uint32 memory date, uint32 memory time) public returns(bool isbooked) // 고객의 전화 예약 시 예약을 생성하는 함수
