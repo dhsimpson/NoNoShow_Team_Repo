@@ -6,8 +6,10 @@ compDB // 업체 데이터
 변수
 일반 변수
 address payable creator // 스마트 컨트랙트 생성자. 고객과 이더를 주고받는다.
+
 DB 변수
-//추가할 변수 : 1. 고객 회원 DB, 2. 업체 회원 DB
+mapping(string=>custDB[]) userCust;// 고객 회원 DB
+mapping(string=>compDB[]) userComp;// 업체 회원 DB
 mapping(string=>books[]) LedgerDB // 예약 장부 DB push Only, "회원고유코드" => 예약내역
 mapping(string=>books[]) compBooks // 업체별  최근 예약 장부(임시 장부이다.) DB push & pop, "업체고유코드" => 예약내역
 
