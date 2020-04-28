@@ -47,12 +47,33 @@ contract NoNoShow{
   constructor () public{
     creator = msg.sender; //스마트 컨트랙트 생성 시에 creator 변수에 생성자 지갑 주소를 할당한다.
   }
+  //함수 내에서 사용하기 위한 함수
+  function uint2str(uint _i) internal pure returns(string memory){//정수형 4자리 유저코드를 string으로 변환
+      if(_i== 0){
+          return ("0000");
+      }
+      uint j = _i;
+      uint len;
+      while (j != 0) {
+          len++;
+          j /= 10;
+      }
+      bytes memory bstr = new bytes(len);
+      uint k = len - 1;
+      while (_i != 0) {
+        bstr[k--] = byte(uint8(48 + _i % 10));
+        _i /= 10;
+      }
+      return (string(bstr));
+  }
+
   // 고객
   function custSignIn(string memory phoneNumber,string memory name,string memory id, string memory pw) public returns(bool){
     if(bytes(userCust[phoneNumber].ID).length!=0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
       //c.f.) 회원 전번이 바뀌는 경우는 delete userCust[phoneNumber] 하면 될듯
-      string memory str = "1234";
-      string memory keyID = string(abi.encodePacked(phoneNumber,str));
+      uint userCode = uint( keccak256( abi.encodePacked( phoneNumber,name,id,pw ) ) )%10000;
+      string memory str = uint2str(userCode);
+      string memory keyID = string(abi.encodePacked(name,str));
       userCust[phoneNumber] = custDB(keyID,phoneNumber,name,id,pw,0,0); // keyID는 임의로, 전번+"1234" 로 한다.
       return true;
     }
