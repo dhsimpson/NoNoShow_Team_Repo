@@ -51,7 +51,7 @@ contract NoNoShow{
 
   // 고객
   function custSignIn(string memory phoneNumber,string memory name,string memory id, string memory pw) public returns(bool){
-    if(bytes(userCust[id].ID).length!=0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
+    if(bytes(userCust[id].ID).length==0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
       //c.f.) 회원 전번이 바뀌는 경우는 delete userCust[phoneNumber] 하면 될듯
       bytes32 keyID = keccak256( abi.encodePacked( phoneNumber,name,id,pw ) );
       userCust[id] = custDB(keyID,phoneNumber,name,id,pw,0,0); // keyID는 임의로, 전번+"1234" 로 한다.
@@ -70,7 +70,7 @@ contract NoNoShow{
   }
   // 업체
   function compSignIn(string memory compName, string memory id, string memory pw ,string memory addr,string memory phoneNumber) public returns(bool){
-    if(bytes(userComp[id].ID).length!=0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
+    if(bytes(userComp[id].ID).length==0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
       //c.f.) 회원 전번이 바뀌는 경우는 delete userCust[phoneNumber] 하면 될듯
       bytes32 compID = keccak256( abi.encodePacked( phoneNumber,compName,id,pw ) );
       userComp[id] = compDB(compID, compName, id, pw, addr, phoneNumber);
