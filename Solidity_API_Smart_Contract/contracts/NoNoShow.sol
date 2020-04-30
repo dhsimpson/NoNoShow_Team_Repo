@@ -51,17 +51,17 @@ contract NoNoShow{
 
   // 고객
   function custSignIn(string memory phoneNumber,string memory name,string memory id, string memory pw) public returns(bool){
-    if(bytes(userCust[phoneNumber].ID).length!=0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
+    if(bytes(userCust[id].ID).length!=0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
       //c.f.) 회원 전번이 바뀌는 경우는 delete userCust[phoneNumber] 하면 될듯
       bytes32 keyID = keccak256( abi.encodePacked( phoneNumber,name,id,pw ) );
-      userCust[phoneNumber] = custDB(keyID,phoneNumber,name,id,pw,0,0); // keyID는 임의로, 전번+"1234" 로 한다.
+      userCust[id] = custDB(keyID,phoneNumber,name,id,pw,0,0); // keyID는 임의로, 전번+"1234" 로 한다.
       return true;
     }
     return false;
   }
-  function custLogIn(string memory phoneNumber, string memory id, string memory pw) public view returns(string memory,bytes32 keyID,bool pass){//
-    if(keccak256(abi.encodePacked((userCust[phoneNumber].ID)))  == keccak256(abi.encodePacked((id))) && keccak256(abi.encodePacked((userCust[phoneNumber].PW))) == keccak256(abi.encodePacked((pw)))){
-      return ("client",userCust[phoneNumber].keyID,true);
+  function custLogIn(string memory id, string memory pw) public view returns(string memory,bytes32 keyID,bool pass){//
+    if(keccak256(abi.encodePacked((userCust[id].ID)))  == keccak256(abi.encodePacked((id))) && keccak256(abi.encodePacked((userCust[id].PW))) == keccak256(abi.encodePacked((pw)))){
+      return ("client",userCust[id].keyID,true);
     }
     return ("","",false);
   }
@@ -70,21 +70,21 @@ contract NoNoShow{
   }
   // 업체
   function compSignIn(string memory compName, string memory id, string memory pw ,string memory addr,string memory phoneNumber) public returns(bool){
-    if(bytes(userComp[phoneNumber].ID).length!=0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
+    if(bytes(userComp[id].ID).length!=0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
       //c.f.) 회원 전번이 바뀌는 경우는 delete userCust[phoneNumber] 하면 될듯
       bytes32 compID = keccak256( abi.encodePacked( phoneNumber,compName,id,pw ) );
-      userComp[phoneNumber] = compDB(compID, compName, id, pw, addr, phoneNumber);
+      userComp[id] = compDB(compID, compName, id, pw, addr, phoneNumber);
       return true;
     }
     return false;
   }
   //function changeCompInfo() => 고객정보 변경 함수가 불필요하게 복잡하기에 추후에 만들기로 한다.
 
-  function compLogIn(string memory phoneNumber, string memory id, string memory pw) public view returns(string memory, bool pass){ // 원래는 로그인할떄 세션값 넘겨져야하는데..ㅎㅎ
-    if(keccak256(abi.encodePacked((userComp[phoneNumber].ID)))  == keccak256(abi.encodePacked((id))) && keccak256(abi.encodePacked((userComp[phoneNumber].PW))) == keccak256(abi.encodePacked((pw)))){
-      return ("comp",true); // 두 문자열을 비교하기 위해 keccack256 사용이 필수이다.(string 자체로는 주솟값이므로)
+  function compLogIn(string memory id, string memory pw) public view returns(string memory,bytes32 compID, bool pass){ // 원래는 로그인할떄 세션값 넘겨져야하는데..ㅎㅎ
+    if(keccak256(abi.encodePacked((userComp[id].ID)))  == keccak256(abi.encodePacked((id))) && keccak256(abi.encodePacked((userComp[id].PW))) == keccak256(abi.encodePacked((pw)))){
+      return ("comp",userComp[id].compID,true); // 두 문자열을 비교하기 위해 keccack256 사용이 필수이다.(string 자체로는 주솟값이므로)
     }
-    return ("",false);
+    return ("","",false);
   }
   ////업체의 예약 관련 함수
   function bookList(bytes32 compID,uint32 date) public returns(books[] memory){ // 업체 ID와 날짜로 그날의 예약 리스트 뽑아오기
@@ -97,8 +97,10 @@ contract NoNoShow{
     return resBooks;
   }
   function ackBook(bytes32 compID,bytes32 keyID,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time, bool ack) public{
-    LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
-    compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
+    if(ack){
+      LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
+      compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
+    }
     emit alertToCust(keyID, ack);
   }
   function resBook(bytes32 keyID,bytes32 compID, uint32 date, bool isShow) public{ // 고객이 예약시간에 왔는지 안왔는지 확인
@@ -115,17 +117,20 @@ contract NoNoShow{
         }
     }
   }
-  function checkUser(string memory phoneNumber,uint32 idx) public returns(books[] memory){ // 고객의 최근 노쇼 기록을 확인
-    delete resBooks;
-    uint32 bookLength = uint32(LedgerDB[userCust[phoneNumber].keyID].length);
-    for(uint32 i = bookLength - 1;i>bookLength-1-idx || i>=0;i--){
-        resBooks.push(LedgerDB[userCust[phoneNumber].keyID][i]);
-    }
-    return resBooks;
-  }
-  function callBook(bytes32 compID,bytes32 keyID,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time) public {//전화 예약에 대해 업체가 예약 넣는것
+  function callBook(bytes32 compID,string memory phoneNumber,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time) public {//전화 예약에 대해 업체가 예약 넣는것
+    bytes32 keyID = userCust[phoneNumber].keyID;
     LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
     compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
     emit alertToCust(keyID, true);
+  }
+  // 업체 회원 공통
+  function checkUser(string memory phoneNumber,uint32 idx) public returns(books[] memory){ // 고객의 최근 노쇼 기록을 확인
+    delete resBooks;
+    uint32 bookLength = uint32(LedgerDB[userCust[phoneNumber].keyID].length);
+    bytes32 keyID = userCust[phoneNumber].keyID;
+    for(uint32 i = bookLength - 1;i>bookLength-1-idx || i>=0;i--){
+        resBooks.push(LedgerDB[keyID][i]);
+    }
+    return resBooks;
   }
 }
