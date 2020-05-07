@@ -12,6 +12,7 @@ contract NoNoShow{
     string custPN; // 고객 전화번호
     uint32 date; // 20201414같이
     uint32 time; // 1130같이
+    uint32 personnel; // 예약인원수
     bool isShow; // 노쇼면false 쇼면true
   }
 
@@ -24,6 +25,7 @@ contract NoNoShow{
     string PW;
     uint32 showCnt;
     uint32 noShowCnt;
+    uint32 age;
     // 토큰, 쿠폰 관련은 나중에 다룸
   }
   struct compDB{//comp 는 company
@@ -42,7 +44,7 @@ contract NoNoShow{
   books[] resBooks; // 함수에서 예약목록 배열을 반환하기 위해 사용
   // 추가로 필요한 것 : mapping(업체명=>업체코드) , string[] 업체명리스트 변수 와 그와 관련 된 함수들
   // 이벤트 함수들 (예약 혹은 예약 확인 시 프론트엔드로 정보를 전달한다.)
-  event alertToComp(bytes32 keyID,bytes32 compID, uint32 date, uint32 time);
+  event alertToComp(bytes32 keyID,bytes32 compID, uint32 date, uint32 time, uint personnel);
   event alertToCust(bytes32 keyID, bool ack);
   // 생성자
   constructor () public{
@@ -50,11 +52,11 @@ contract NoNoShow{
   }
 
   // 고객
-  function custSignIn(string memory phoneNumber,string memory name,string memory id, string memory pw) public returns(bool){
+  function custSignUp(string memory phoneNumber,string memory name,string memory id, string memory pw, uint32 age) public returns(bool){
     if(bytes(userCust[id].ID).length==0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
       //c.f.) 회원 전번이 바뀌는 경우는 delete userCust[phoneNumber] 하면 될듯
-      bytes32 keyID = keccak256( abi.encodePacked( phoneNumber,name,id,pw ) );
-      userCust[id] = custDB(keyID,phoneNumber,name,id,pw,0,0); // keyID는 임의로, 전번+"1234" 로 한다.
+      bytes32 keyID = keccak256( abi.encodePacked( phoneNumber,name,id,pw,age ) );
+      userCust[id] = custDB(keyID,phoneNumber,name,id,pw,0,0,age); // keyID는 임의로, 전번+"1234" 로 한다.
       return true;
     }
     return false;
@@ -65,11 +67,11 @@ contract NoNoShow{
     }
     return ("","",false);
   }
-  function book(bytes32 keyID,bytes32 compID,uint32 date, uint32 time)public{
-    emit alertToComp(keyID,compID,date,time); // 예약 내용을 보내주기만 한다. 실제 Tx 생성은 업체가 한다.
+  function book(bytes32 keyID,bytes32 compID,uint32 date, uint32 time, uint32 personnel)public{
+    emit alertToComp(keyID,compID,date,time, personnel); // 예약 내용을 보내주기만 한다. 실제 Tx 생성은 업체가 한다.
   }
   // 업체
-  function compSignIn(string memory compName, string memory id, string memory pw ,string memory addr,string memory phoneNumber) public returns(bool){
+  function compSignUp(string memory compName, string memory id, string memory pw ,string memory addr,string memory phoneNumber) public returns(bool){
     if(bytes(userComp[id].ID).length==0){//회원가입 된 전번인지 확인, 회원이 있을 땐 ID길이가 0이 아님을 이용
       //c.f.) 회원 전번이 바뀌는 경우는 delete userCust[phoneNumber] 하면 될듯
       bytes32 compID = keccak256( abi.encodePacked( phoneNumber,compName,id,pw ) );
@@ -96,10 +98,10 @@ contract NoNoShow{
     }
     return resBooks;
   }
-  function ackBook(bytes32 compID,bytes32 keyID,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time, bool ack) public{
+  function ackBook(bytes32 compID,bytes32 keyID,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time,uint32 personnel, bool ack) public{
     if(ack){
-      LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
-      compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
+      LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel, false));
+      compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel, false));
     }
     emit alertToCust(keyID, ack);
   }
@@ -117,10 +119,10 @@ contract NoNoShow{
         }
     }
   }
-  function callBook(bytes32 compID,string memory phoneNumber,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time) public {//전화 예약에 대해 업체가 예약 넣는것
+  function callBook(bytes32 compID,string memory phoneNumber,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time, uint32 personnel) public {//전화 예약에 대해 업체가 예약 넣는것
     bytes32 keyID = userCust[phoneNumber].keyID;
-    LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
-    compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,false));
+    LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,false));
+    compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,false));
     emit alertToCust(keyID, true);
   }
   // 업체 회원 공통
