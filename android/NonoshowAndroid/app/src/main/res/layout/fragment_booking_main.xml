@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scrollView_booking_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorLightGray"
+        tools:layout_editor_absoluteX="-16dp"
+        tools:layout_editor_absoluteY="83dp">
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutBookingManager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/LinearLayoutBookingMain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp" />
+
+                <EditText
+                    android:id="@+id/hint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginRight="14dp"
+                    android:inputType="text"
+                    android:background="@drawable/edit_text_customize_gray207"
+                    android:drawableStart="@drawable/drawable_customize"
+                    android:ems="10"
+                    android:hint="@string/text_search_with_name"
+                    android:imeOptions="actionSearch"
+                    android:importantForAutofill="no"
+                    android:maxLength="12"
+                    android:padding="5dp"
+                    android:singleLine="true"
+                    android:textAlignment="center"
+                    android:textCursorDrawable="@drawable/text_cursor"
+                    android:textSize="19sp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp" />
+
+            </LinearLayout>
+
+            <!--TableRow
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginHorizontal="14dp"
+                android:layout_marginVertical="10dp"
+                android:background="@color/colorWhite">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:textSize="30sp" />
+                < 아래 뷰는 이미지 버튼을 오른쪽으로 보내기위한 장치 >
+
+                <ImageButton
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@color/colorPrimaryDark" />
+
+            </TableRow-->
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
