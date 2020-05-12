@@ -1,0 +1,120 @@
+NoNoShow 종합설계프로젝트
+<List>
+Solidity_API_Smart_Contract - 스마트 컨트랙트 배포 파일(Truffle 프레임워크 이용해 컴파일,테스팅,이더리움 네트워크에 배포)
+Solidity_API_Test - web3.js API를 이용해 스마트 컨트랙트를 테스트할 수 있는 파일.(작성한 스마트 컨트랙을 Local 혹은 테스팅 이더리움 네트워크에배포 한 상태여야 함)
+
+
+안드로이드 앱 - https://github.com/haebeompark/NonoshowAndroid
+
+
+
+
+                                              .,cc;'',,,,,,,,,,;;,;;;;:;:cc,.                     
+  ..............................................,ll:,,,,,,,,,,,;;;;;;;;;;;::ll,...................  
+  .............................................'clc:,,,,,,,,,,,,;;;;;;;;;;;::lc..lOOOOOolc.,okc...  
+  .............................................,lllc;,,,,,,,,,,;;;;;;;;;;;;;;cl'.lK000KkddlOXXk;..  
+  .............................................:ccc:;,,,,,,,,,;;;;;;;;,,;;,,;cl'.cOdclOdl0N0llx:..  
+  ............................................,cc;,:;'',,''',,,,;,,,,,,,,;;;;cc..;ONXXKc'ld:.,c,..  
+  ............................................,lc;;dOdxxxoolclc::lclool,';;;;cc...;dkx:...........  
+  ............................................'cclok000K0O000KK0KKXXXXk;';;,;cc...;llll:;ccccc:'..  
+  ............................................'cokkkO00000000KKKKKKXXX0dl;,;:l:..:0NNNNOxXNNNNO;..  
+  ............................................';dOdolloO00KKKKKXXXKOxxddkx:;;;,..oOdooocokooddl,..  
+  ...........................................':;dOxdo:',cdOKO0KOdccldxxk0Ol;;cl'.l0kxxxoc;........  
+  ...........................................;l:dOkxo:;clcd0kdl,',;okdkKXk:;cdl..;kOxk0d:,,:;.....  
+  ............................................cclOK0Okkkkxd0X0OddxdxOOKXKo,col'..';.  ..  .d0d;'..  
+  .............................................:lxK00OOkkxk0XK0OO0KKXXXXOllxl....ld''ldc'';:ol;'..  
+  ...............................................ck00OOkkOOKXKKXKXXXXXXKkdo;.....cl,cKXdl0NX0xl,..  
+  ................................................,o00OxxxOXKKKXKXKKKKKOd,.......;oOKOxccxdc;'....  
+  ...............................................';lkOOOxodOOO0KXKKKKKOko........dNNNXNkodoc,'....  
+  ...............................................,lxkxOkkxddkOO0KKKXKO0Kl........:ooooocl0XXKOo,..  
+  ...............................................,ldkxxkkxxxOkkOKXKOO0X0:........:dddddc,ckXNNO;..  
+  ...............................................;dxkkooOOO0KKKKKkdk0KXO,.......'dXNNNNklkNX0d:'..  
+  ...............................................;xxkOdccldkOOkxddk0KKXk'........;cd0kl;,ckKXXx,..  
+  .........................................':c,;lk0OOkdlc:coollok0OKKKXk'  ......lOKXX0olOXXX0d,..  
+  ................................'..'''lx:c0OkOO00kkkxxddoxO0000OOKKKX0o;.......l0kooOdlxdl:,....  
+  ...........................,oc.:d:,,,,d0clkxxdxO0kxkkkkkk0XNXKOk0KXKX0xkxlccdl':c'..''..........  
+  .......................';::lOO;;xc,,,,o0ccdoddO0OkdxOOxx0KXXKkxO0KKXKxlxO0OxOdoXO;..............  
+  ...............',;:::::lddoldOl;xc,,,,cOlcddO0KxlddokKOdOXXKOdxO0KX0xoodkOxOkl0Xo,,:d:';;.......  
+  ............':oxkOOOOkkxxxxdkKocOl,,,,;xo:dxxxdddxdldOKkxKKkxxOO0KKKOdok0dkOoxXx;,:kOcdKx;......  
+  ..........'ckOOOO0000OOOO0K000cdKc,,,,,oxcokoloxxkxoloOKO0OdoxOOxkO0Oxolck0ldKx;,,d0ccOdxOo;'...  
+  .........,x0OOO00000OO0OO0KO0x:O0:,,,,,;xdcddlllloooc;cOXKkoloooodxkxxxokKol0k;,,c0x,dkldkkOxlc:'.
+  ........;k0OOOOO000OOOOOO00O0c:0d',,,,,,:kx:lxkkxkO00d,:OOxcccoKXXKKXKOK0llkd;,,,d0c;kOOKK0KK0KK0k
+  .......;k00OOOO00OOOOOOOOkk00::Ol.,,,,,,,:kOl:lxkOOO00kloxdlox0XXXK0OO0xcoxl,,,,cOd,oOOKXKKkxxxk0K
+  ......:O000OOOO0OOO0OO0Oxdd0K:;kl.',,,,,,,:x0Oolloxk000xxolddxO000000xlokx:,,,,,dKc;kOOKKKKOxooox0
+  .....:k000xodkOOOOO0OOOxodk0K::Ol.',,,,,,,,,cdO0OOkkOOOOOkkkkkOOkkkxxxO0d;,,,,,,k0;:OOOK00KKK0xook
+  ....'d00xc:okOOOOOOOOOdclkkKk:kO;.',,,,,,,,,,,,::coxOOOOO00000Okxdodxdl:,,,,,,,;kd'cOOO0000000K0kd
+  ....;kKx,;k0OOOOOkkkxl:dOkOx:d0l..',,,,,,,,,,,,,,,'',;cllooddddol:;,,,,,,,,,,,,lOc.oOkOOO00OO00K0d
+  ....c0O;'x0OO0OkxxddlokkxOd;dx:,..',,,,,,,,,,,,,,,,'',,,,,,,,,,,,,,,,,,,,,,,,,,o0l'dOkkxOO0O0000XO
+  ....lKk;c0OO0Oxddddolxkdd:;xx;,''',,,,,,,,,,,,,,,,,,',,,,,,,,,,,,,,,,,,,,,,,,,,c0d,okkkolxO00K00KK
+  ....lKOcckOOkxdololloldl';kx;,''',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,;kO;ckkOOo;:dOKK0KX
+  ...;d0Kd:dkxoloddkd:ldl;:xl,,,'',,,;;;;;;;;;,,,;;:;,',:;',;;;;;;;;,,,,,,,,,,,,,,dKlckOkkk:;ddOKKKK
+  .'lod0KOoododxO000o:ll;co;'',;;::,',c;..:c,.,:..':c. .c' .:c'.;;.,::,',::;;,,,''c0dckOkxdlcxkO0Okk
+  'xxoOK0KOxO000K00d:;,'ckl';,':;;l,  ::  :c. 'c.  .l' .:. .l' .c; .c:  'l;,c:,,,';xOcdkxOxccxkkkkkk
+ ;kOxx0KKKxoO00KK0dc,.;dxo;,:, .;;c:. ';. ,c. .c.  .c' .:. ,c. .c. .c,  '',:c;  ,:,cKx:dkxxclxkkkxxk
+;k0O0000KOox00KKkoll:ldc,,,,,;,. .'c, .:, .c; .c' .,c. 'c. ,c. ,:. ,c. . .;:;. .c;':d0o:kd;,:xxdkOod
+dkk0000KkoxO0KXOookl::,,,,,,'';:;' 'c. ,;..;c,,;;'',:,';:,';:;';,.,c, .:..;c' .:;,;;,ckdd; 'oO0KKXxd
+kkO0K0Kkox0O0KKOkOk:''',,,,,'.,:,;,,c,.',',;;,;;,...,;;;;;,,,,;,',;;,.,:'.:c. ,:,,,,,,:kd..lOOKKXNOo
+O000K0xox0O0KK0O0k:...,,,,',,..;;,,,,'....,,,,,,....,,,,,,,..',...,,'.';;;;:,',,'..,,,,oo',okOKKKN0o
+00KOdldkO00KKK000o...,,,,'.,,..','..'....',,,,,,....,,,,',,,......','..,,,,,;;,.....,,,okccodOKKKXXd
+K0d;:xO00KKKK0KKo,..',,,,'.',..',,.......',,,,,,'...,,,,,,,,,.....','..',,,,,,'......,,:ddodoxKKKKXO
+Ol:dO00KKXXK00k:.''.',,,,'..'..',,'......,,,,,,,,...',,,,,,,,'.....,'..',,,,,,,.......,,,:lddx0KKKXX
+dlk0O0KXXXX00x, .,,,,,,,,'..'...','.....',,,,,,,,...',,,,,,,,,'....,'..',,,,,,,.......',,,;okO0KKKXX
+
+
+
+D
+eeeeeD
+ eeeeeeeee
+  eeeee   eee5
+   eeeee     Eeee,
+    ,eee  uu     eee
+      eee  uuuuu   ,ee                                      KzeeeeeeeeeeeeXueeeeeeee
+       eeW uuuuuuu,   ee            K5D##9####zW    yeeeeeeeEX             eeeeeee
+        ye  ,uuuuuuuu   ee #eeeeeeeeE#D5555555XEeeee9u         ,uuuuuu   Geeeee            D
+          e     ,uuuuuu   eX                          ,uuuuuuuuuuuuuu   eeee             eee
+           eeu,        ,,   ,uuuuuuuuuuuuuuuuuuuuuuuuuu   ,u,,,,,     eee              ee  e
+            WeGyXDy,Key,uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu e5        5eee#              Eeu   e5
+              WeG  ee  uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  EeuWEeeeeX                Gey  ,u ue
+                Xee9  uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  9ee9                    eG  ,uuu, e
+                  e  uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  e                    ue5  uuuuuu e
+                 e  uu       ,uuuuuuuuuuuuuuuuuuu        ,  e                  ee  ,uuuuuuu eu
+                Ge uu  Xeee5   uuuuuuuuuuuuuuuuu  eeeeeX  , ee               ,e5  uuuuuuuuu De
+                e  uu ee  eeeG ,uuuuuuuuuuuuuuuu e    eee ,  e              ee  ,uuuuuuuuuu  e
+                e ,u, e#  eeee, uuuuuuuuuuuuuuu, ee9#eeee ,u e#           ue5  uuuuuuuuuuuu, e
+               We uu, eeeeeeee  uuuuuuuuuuuuuuuu 9eeeeeee ,u  e          ee  ,uuuuuuuuuuuuuu eu
+               e  uu, eeeeeee  ,uuuuu,     ,uuuu   WGGX   uuu ,e       9e   uuuuuuuuuuuuuu   ee
+               e ,uuu   uW    ,uuuuu,   KDX uuuuu,             e      Ge  ,uuuuuuuuuuuuu   9e9
+              eu u,         ,uuuuuuuuueeee, uuuuuuuuuu  yeeeeW Ee    ee  uuuuuuuuuuuuu   Ee#
+              e ,   z99   uuuuuuuuuu,      ,uuuuuuuuuu eeDXXDee e  ,eu  uuuuuuuuuuuu,  XeE
+              e   eeeEee# uuuuuu   ,             ,uuuu eyXDDXzeXX ee  ,uuuuuuuuuuu,  Xee
+              e  WeWXddXe uuuuuu e   #eeeeeeeD,e5,uuuu eGX5X#e,e eK  uuuuuuuuuuu,  Xee
+              eK ,eXX5D#e uuuuuu ,eeeX       De  ,uuuu  eeee9 eu eX   uuuuuuuu,   ee
+               eu XGeeeX  uuuuuuu     ,uuuuu    ,uuuuu,      ee   Dee  ,uuuuuu,ueE
+                ee       ,uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuee  e    Dey  uuuuu, ee
+                 eee,,uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu     e9     ee  uuuuu  De
+                 e   uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  e      Ee uuuuuu   e
+                eG uuuuuuuuuuuuuuu            uuuuuuuuuuuuuuuuu e     ee  uuu,   GeD
+                e  uuuuu   ,uuuuuuK9X5yyyy5XzW,uuuu,,,uuuuuuuuu ye  ee,  uu   uee5
+                e ,uuuuu eu uuuuuu u5##zzz9zW ,uuuu y uuuuuuuuu  eEe   ,,   eee
+                e uuuuuu  e  uuuuuu,   WyK   ,uuuu  e ,uuuuuuu,, e   ,u  KeeK
+               9e uuuuuuu ye  uuuuuuuu,   ,uuuuuuu Xe uuuuuuu  , 9ee    ,e
+               eW uuuuuuu  eG ,uuuuuuuuuuuuuuuuuuu e  uuuuuu  ey  e e# uzEe
+               e  uuuuuuuu  e  uuuuuuuuuuuuuuuuuuu e ,uuuuu  eE   e eeeeeeee
+               e ,   uuuuuu  e  uuuuuuuuuuuuuuuuu, e uuuuu  ee  u eeeEEEGeeee
+               e u E  ,uuuu, ee uuuuuuuuuuuuuuuuu ,e uuuu  eD  uu ee#Eeeee5
+               e u ee   uuuu  e   uuuuuuuuuuuuuu, e5 ,u,  e5 ,uuu ee9eeu
+               e u   ee   ,uu  eX uuuuuuuuuuuuuu,ue9     e5  uuuu Ge#e
+               e  uu  ueeX     e  uuuuuuuuuuuuuu,  Geeeee  ,uuuuu Geeee
+               #e uuu,   5eeEee  ,uuuuuuuuuuuuuuu,        uuuuuu, eeey
+                e  uuuuu,   e   uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  e
+                e# uuuuuuu,   uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu, e5
+                 e  uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  e
+                 ue  uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu  e
+                  Ge  uuuuuuuuuuuuuuuuuu,,,uuuuuuuuuuuuuuuuuu  ee
+                   #e   ,uuuuuuuuu,                ,,,        ee
+                     eey             KyXz9eeeeEXWu    yeE#EeeeW
+                       eeeeeeeD zeeeeeeeeEXu,59eeeeeey   ez
+                          eu    ey                   ee   ueu
+                        WeW#  ee                       eeeeeu
+                        ezeeeeK                          XK
+                            D
