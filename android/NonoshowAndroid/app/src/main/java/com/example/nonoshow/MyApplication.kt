@@ -39,6 +39,8 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         var loginToken = "" /*서버에서 암호화해서 보내준 녀석을 저장<나중에 업데이트>*/
         var bookingTextView : TextView? = null
 
+        var managerMode : Boolean = false
+
         fun <T> createView(
             type: Int,     /*0 = LL 1 = textView 2 = ImageButton */
             directionHorizontal: Boolean = false,    /*레이아웃 방향 true = 가로*/

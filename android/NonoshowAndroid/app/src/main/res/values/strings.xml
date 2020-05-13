@@ -27,4 +27,5 @@
     <string name="signout">로그아웃</string>
     <string name="text_load_more">load more</string>
     <string name="text_booking">예약하기</string>
+    <string name="text_initial_text">로드중</string>
 </resources>
