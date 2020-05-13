@@ -1,5 +1,6 @@
 package com.example.nonoshow.ui.signUp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.nonoshow.MyApplication
+import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.R
+import kotlinx.android.synthetic.main.fragment_sign_up.*
 
 class SignUpFragment : Fragment() {
 
@@ -23,6 +26,15 @@ class SignUpFragment : Fragment() {
             MyApplication.isLogined = false
             it.findNavController().navigate(R.id.nav_signIn)
         }
+
+        uiChange(managerMode)
+        switch_manager_join.isChecked = managerMode
+        var isManager = false
+        switch_manager_join.setOnClickListener{
+            isManager = switch_manager_join.isChecked
+            managerMode = isManager /*set global value*/
+            uiChange(isManager)
+        }
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,5 +45,18 @@ class SignUpFragment : Fragment() {
             ViewModelProviders.of(this).get(SignUpViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_sign_up, container, false)
         return root
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun uiChange(isManager : Boolean = false){
+/*visible setting*/
+        if(isManager) {
+            switch_manager_join.text = "관리자모드 ON"
+            button_signup.text = "관리자 회원가입"
+        }
+        else{
+            switch_manager_join.text = "관리자모드 OFF"
+            button_signup.text = "회원가입"
+        }
     }
 }

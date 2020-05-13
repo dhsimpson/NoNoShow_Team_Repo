@@ -53,6 +53,7 @@ class SignInFragment : Fragment() {
             }
         }
         uiChange(managerMode)
+        switch_manager.isChecked = managerMode
         var isManager = false
         switch_manager.setOnClickListener{
             isManager = switch_manager.isChecked
@@ -93,6 +94,11 @@ Log.i("PW",MyApplication.PW)
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        uiChange(managerMode)
+        switch_manager.isChecked = managerMode
+    }
 
     @SuppressLint("SetTextI18n")
     private fun uiChange(isManager : Boolean = false){  /*false : 고객로그인모드, true : 관리자로그인모드*/

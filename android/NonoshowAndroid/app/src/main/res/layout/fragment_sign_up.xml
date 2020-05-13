@@ -7,13 +7,27 @@
     android:background="@color/colorLightGray">
 
     <ScrollView
+        android:id="@+id/scrollView3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <Switch
+                android:id="@+id/switch_manager_join"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/text_initial_text"
+                android:layout_gravity = "end"
+                android:textOn="@string/text_switch_on"
+                android:textOff="@string/text_switch_off"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -41,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:height="60dp"
+                android:autofillHints=""
                 android:background="@drawable/edit_text_customize_white"
                 android:ems="10"
                 android:hint="@string/id"
@@ -53,7 +68,7 @@
                 android:singleLine="true"
                 android:textCursorDrawable="@drawable/text_cursor"
                 android:textSize="25sp"
-                android:autofillHints="" tools:targetApi="o" />
+                tools:targetApi="o" />
 
             <Space
                 android:layout_width="match_parent"
@@ -68,6 +83,7 @@
                 android:background="@drawable/edit_text_customize_white"
                 android:ems="10"
                 android:hint="@string/name"
+                android:importantForAutofill="no"
                 android:inputType="textPersonName"
                 android:maxLength="18"
                 android:paddingLeft="10dp"
@@ -76,8 +92,31 @@
                 android:paddingBottom="8dp"
                 android:singleLine="true"
                 android:textCursorDrawable="@drawable/text_cursor"
-                android:textSize="25sp"
-                android:importantForAutofill="no" />
+                android:textSize="25sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <EditText
+                android:id="@+id/age"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:height="60dp"
+                android:background="@drawable/edit_text_customize_white"
+                android:ems="10"
+                android:hint="@string/text_age"
+                android:importantForAutofill="no"
+                android:inputType="phone"
+                android:maxLength="24"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="8dp"
+                android:singleLine="true"
+                android:textCursorDrawable="@drawable/text_cursor"
+                android:textSize="25sp" />
 
             <Space
                 android:layout_width="match_parent"
@@ -92,6 +131,7 @@
                 android:background="@drawable/edit_text_customize_white"
                 android:ems="10"
                 android:hint="@string/phoneNum"
+                android:importantForAutofill="no"
                 android:inputType="phone"
                 android:maxLength="18"
                 android:paddingLeft="10dp"
@@ -100,8 +140,7 @@
                 android:paddingBottom="8dp"
                 android:singleLine="true"
                 android:textCursorDrawable="@drawable/text_cursor"
-                android:textSize="25sp"
-                android:importantForAutofill="no" />
+                android:textSize="25sp" />
 
             <Space
                 android:layout_width="match_parent"
@@ -116,6 +155,7 @@
                 android:background="@drawable/edit_text_customize_white"
                 android:ems="10"
                 android:hint="@string/text_PW"
+                android:importantForAutofill="no"
                 android:inputType="textPassword"
                 android:maxLength="24"
                 android:paddingLeft="10dp"
@@ -124,8 +164,7 @@
                 android:paddingBottom="8dp"
                 android:singleLine="true"
                 android:textCursorDrawable="@drawable/text_cursor"
-                android:textSize="25sp"
-                android:importantForAutofill="no" />
+                android:textSize="25sp" />
 
             <Space
                 android:layout_width="match_parent"
@@ -140,6 +179,7 @@
                 android:background="@drawable/edit_text_customize_white"
                 android:ems="10"
                 android:hint="@string/PW_check"
+                android:importantForAutofill="no"
                 android:inputType="textPassword"
                 android:maxLength="24"
                 android:paddingLeft="10dp"
@@ -148,12 +188,12 @@
                 android:paddingBottom="8dp"
                 android:singleLine="true"
                 android:textCursorDrawable="@drawable/text_cursor"
-                android:textSize="25sp"
-                android:importantForAutofill="no" />
+                android:textSize="25sp" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="10dp" />
+
 
             <Button
                 android:id="@+id/button_signup"
