@@ -27,12 +27,12 @@ class SignInFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         MyApplication.isLogined = false
-        val logoButton : ImageView = getView()!!.findViewById(R.id.logoImage)
-        val signIn : Button = getView()!!.findViewById(R.id.button_signIn)
-        val signUp : Button = getView()!!.findViewById(R.id.button_signUp)
-        val checkImage : ImageView = getView()!!.findViewById(R.id.checkImage)
-        val textID : EditText = getView()!!.findViewById(R.id.editText_ID)
-        val textPW : EditText = getView()!!.findViewById(R.id.editText_PW)
+        val logoButton : ImageView = requireView().findViewById(R.id.logoImage)
+        val signIn : Button = requireView().findViewById(R.id.button_signIn)
+        val signUp : Button = requireView().findViewById(R.id.button_signUp)
+        val checkImage : ImageView = requireView().findViewById(R.id.checkImage)
+        val textID : EditText = requireView().findViewById(R.id.editText_ID)
+        val textPW : EditText = requireView().findViewById(R.id.editText_PW)
         logoButton.setOnClickListener{
             val uri = Uri.parse("http://github.com/haebeompark/NonoshowAndroid")
             val intent : Intent = Intent(Intent.ACTION_VIEW, uri)

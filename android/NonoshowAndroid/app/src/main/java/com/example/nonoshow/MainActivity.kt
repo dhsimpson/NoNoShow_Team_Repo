@@ -14,15 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.View
+import android.webkit.WebView
 import android.widget.TextView
 import com.example.nonoshow.MyApplication.Companion.contextForList
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     override fun onCreate(savedInstanceState: Bundle?) {
-        /*Thread {
-            EthereumServiceKt.setConnectEther()     /*이더리움 연결*/
-        }.start()*/
 Log.i("set","created")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -36,13 +34,18 @@ Log.i("set","created")
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking
+                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking, R.id.nav_booking_List
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
         contextForList = this
+        val webView : WebView = WebView(contextForList)
+        webView.apply{loadUrl("textContract.func3()")}
+        Thread {
+            //EthereumServiceKt.getBalance()     /*이더리움 연결*/
+
+        }.start()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
