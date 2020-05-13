@@ -14,7 +14,7 @@ import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.R
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
-class SignUpFragment : Fragment() {
+class SignUpFragment : Fragment() { /*회원가입*/
 
     private lateinit var toolsViewModel: SignUpViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,12 +51,18 @@ class SignUpFragment : Fragment() {
     private fun uiChange(isManager : Boolean = false){
 /*visible setting*/
         if(isManager) {
-            switch_manager_join.text = "관리자모드 ON"
             button_signup.text = "관리자 회원가입"
+            switch_manager_join.text = "관리자모드 ON"
+            Name.hint = "회사 이름"
+            age.hint = "주소"
+            title_SignUP.text = "관리자 회원가입"
         }
         else{
-            switch_manager_join.text = "관리자모드 OFF"
             button_signup.text = "회원가입"
+            switch_manager_join.text = "관리자모드 OFF"
+            Name.hint = "이름"
+            age.hint = "나이"
+            title_SignUP.text = "회원가입"
         }
     }
 }

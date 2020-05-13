@@ -26,6 +26,8 @@
                 android:layout_gravity = "end"
                 android:textOn="@string/text_switch_on"
                 android:textOff="@string/text_switch_off"
+                android:track="@drawable/switch_track_selector"
+                android:thumb="@drawable/switch_thumb"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

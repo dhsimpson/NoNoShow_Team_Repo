@@ -28,6 +28,7 @@
         android:textColor="@color/colorWhite"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:theme = "@style/Theme.AppCompat.Light.DarkActionBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -117,6 +118,8 @@
         android:text="@string/text_initial_text"
         android:textOn="@string/text_switch_on"
         android:textOff="@string/text_switch_off"
+        android:track="@drawable/switch_track_selector"
+        android:thumb="@drawable/switch_thumb"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
