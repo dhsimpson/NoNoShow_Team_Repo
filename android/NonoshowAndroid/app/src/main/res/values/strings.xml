@@ -27,4 +27,9 @@
     <string name="signout">로그아웃</string>
     <string name="text_load_more">load more</string>
     <string name="text_booking">예약하기</string>
+    <string name="text_initial_text">로드중</string>
+    <string name="text_switch_on">관리자모드 ON</string>
+    <string name="text_switch_off">관리자모드 OFF</string>
+    <string name="text_age">나이</string>
+    <string name="text_booking_list">예약기록 / 관리</string>
 </resources>

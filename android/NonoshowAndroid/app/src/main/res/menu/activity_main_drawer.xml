@@ -15,6 +15,9 @@
             android:id="@+id/nav_booking"
             android:title="@string/menu_booking_main"/>
         <item
+            android:id="@+id/nav_booking_List"
+            android:title="@string/text_booking_list"/>
+        <item
             android:id="@+id/nav_signUp"
             android:title="@string/menu_signUp"
             android:visible="false"/>
