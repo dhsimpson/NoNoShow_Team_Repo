@@ -11,13 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.nonoshow.EthereumServiceKt.Companion.callMethodCompSignUp
-import com.example.nonoshow.EthereumServiceKt.Companion.callMethodCustSignUp
 import com.example.nonoshow.MyApplication
 import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.R
 import kotlinx.android.synthetic.main.fragment_sign_up.*
-import org.web3j.abi.datatypes.Uint
-import org.web3j.abi.datatypes.generated.Uint32
 
 class SignUpFragment : Fragment() { /*회원가입*/
 
@@ -25,7 +22,7 @@ class SignUpFragment : Fragment() { /*회원가입*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MyApplication.isLogined = false
-        val signUp : Button = getView()!!.findViewById(R.id.button_signup)
+        val signUp : Button = requireView().findViewById(R.id.button_signup)
         signUp.setOnClickListener{
             MyApplication.isLogined = false
             val id = nickName.text.toString()
@@ -94,11 +91,11 @@ class SignUpFragment : Fragment() { /*회원가입*/
                               ageOrAddress : String, isManager : Boolean){
         when(isManager){
             true->{
-                Thread{callMethodCompSignUp(name, id, pw, ageOrAddress, phoneNumber)}.run()
+                Thread{callMethodCompSignUp(/*name, id, pw, ageOrAddress, phoneNumber*/)}.run()
 
             }
             false->{
-                Thread{callMethodCustSignUp(phoneNumber, name, id, pw, Uint32(ageOrAddress.toLong()))}.run()
+                Thread{callMethodCompSignUp(/*phoneNumber, name, id, pw, Uint32(ageOrAddress.toLong())*/)}.run()
             }
         }
     }

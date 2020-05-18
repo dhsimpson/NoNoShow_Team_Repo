@@ -43,7 +43,7 @@ Log.i("set","created")
         val webView : WebView = WebView(contextForList)
         webView.apply{loadUrl("textContract.func3()")}
         Thread {
-            //EthereumServiceKt.getBalance()     /*이더리움 연결*/
+            EthereumService.getBalance()    /*이더리움 연결*/
 
         }.start()
     }
