@@ -9,5 +9,8 @@
     <color name="colorLogo">#27CC9E</color>
     <color name="colorGray207">#d0cfcf</color>
     <color name="colorGray140">#8c8c8c</color>
+    <color name="colorRedBlack">#3b3737</color>
+    <color name="colorGreenWhite">#c5edcb</color>
+    <color name="colorRedWhite">#ffc2b0</color>
 </resources>
 <!--android:id="@+id/colorPrimary"-->
