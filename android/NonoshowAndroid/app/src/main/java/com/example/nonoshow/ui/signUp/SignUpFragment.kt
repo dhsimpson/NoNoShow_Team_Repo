@@ -10,9 +10,11 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import com.example.nonoshow.EthereumService.custSignUp
 import com.example.nonoshow.EthereumServiceKt.Companion.callMethodCompSignUp
 import com.example.nonoshow.MyApplication
 import com.example.nonoshow.MyApplication.Companion.managerMode
+import com.example.nonoshow.MyApplication.Companion.trySignUp
 import com.example.nonoshow.R
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
@@ -91,11 +93,17 @@ class SignUpFragment : Fragment() { /*회원가입*/
                               ageOrAddress : String, isManager : Boolean){
         when(isManager){
             true->{
-                Thread{callMethodCompSignUp(/*name, id, pw, ageOrAddress, phoneNumber*/)}.run()
+
 
             }
             false->{
-                Thread{callMethodCompSignUp(/*phoneNumber, name, id, pw, Uint32(ageOrAddress.toLong())*/)}.run()
+                Log.i("ageOrAddress.toInt()",""+ageOrAddress.toInt())
+                Log.i("name",name)
+                Log.i("id",id)
+                Log.i("pw",pw)
+                Log.i("phone",phoneNumber)
+                Thread{trySignUp(phoneNumber,name,id,ageOrAddress,pw)}.start()
+                //Thread{custSignUp(name, id, pw, ageOrAddress.toInt(),phoneNumber)}.start()
             }
         }
     }

@@ -33,6 +33,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static org.objectweb.asm.commons.GeneratorAdapter.AND;
+
 /*
 * 함수사용  참고해보기
 * https://sabarada.tistory.com/21?category=800571
@@ -42,8 +45,10 @@ public class EthereumService {
     private static String url = "https://ropsten.infura.io/v3/4b06de7f86264b748a0e78ed57222891";  /*test넷 url*/
     static String contractAddress = MyApplication.Companion.getContextForList().getResources().getString(R.string.smartContractAddress);
     private static String address = MyApplication.Companion.getContextForList().getResources().getString(R.string.myWalletAddress); /*wallet*/
-    private static String privateKey = MyApplication.Companion.getContextForList().getResources().getString(R.string.myPrivateKey);
+    private static String password = MyApplication.Companion.getContextForList().getResources().getString(R.string.myPrivateKey);
+    private static BigInteger ACOUNT_UNLOCK_DURATION = BigInteger.valueOf(5000);
     private Web3ClientVersion  clientVersion;
+    static Admin admin = Admin.build(new HttpService(url));
     static Web3j web3j = Web3j.build(new HttpService(url));
     public static void getEthClientVersionSync() throws Exception
     {
@@ -116,7 +121,7 @@ public class EthereumService {
         from=address;
         try {
             getEthClientVersionSync();
-            from = custLogInDetail(id, pw);
+            custLogInDetail(id, pw);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,20 +159,20 @@ public class EthereumService {
         System.out.println("ethCall.getResult() = " + ethCall.getResult());
         Number number = new Integer(0);
         String valueBool = "UNKNOWN";
-        boolean bool = decode.remove(number);
+        boolean bool = decode.isEmpty();
         if(bool){
             valueBool = "TRUE";
         }
         else    valueBool = "FALSE";
 
 
-        System.out.println("getValue = " + valueBool);
+        System.out.println("getValue = " + decode.indexOf(number));
         number = new Integer(1);
         System.out.println("getValue = " + decode.indexOf(number));
         number = new Integer(2);
         System.out.println("getValue = " + decode.indexOf(number));
 
-        return (String)decode.get(0).getValue();
+        return valueBool;
     }
 
 
@@ -181,8 +186,19 @@ public class EthereumService {
             e.printStackTrace();
         }
     }
+    public static String custSignUpDetail(String name,String id,String pw,int ageOrAddress,String phoneNumber) throws IOException, ExecutionException, InterruptedException {
 
-    public static void custSignUpDetail(String name,String id,String pw,int ageOrAddress,String phoneNumber)throws IOException, ExecutionException, InterruptedException{
+        // 1. 호출하고자 하는 function 세팅[functionName, parameters]
+        Function function = new Function("custSingUp",
+                Arrays.asList(convertStringToBytes32(phoneNumber),convertStringToBytes32(name),convertStringToBytes32(id),convertStringToBytes32(pw),new Uint32(ageOrAddress)),
+                Arrays.asList(new TypeReference<Bool>(){}));
+
+        // 2. ethereum을 function 변수로 통해 호출
+        return ethCall(function);
+    }
+
+
+    public static void custSignUpDetail2(String name,String id,String pw,int ageOrAddress,String phoneNumber)throws IOException, ExecutionException, InterruptedException{
         Function function = new Function("custSingUp",
                 Arrays.asList(convertStringToBytes32(phoneNumber),convertStringToBytes32(name),convertStringToBytes32(id),convertStringToBytes32(pw),new Uint32(ageOrAddress)),
                 Arrays.asList(new TypeReference<Bool>(){}));
@@ -191,23 +207,33 @@ public class EthereumService {
         String txHash = ethSendTransaction(function);
 
         // 7. getReceipt
+        Log.i("getReceipt","try");
         TransactionReceipt receipt = getReceipt(txHash);
+        Log.i("getReceipt","" +receipt);
         System.out.println("receipt = " + receipt);
     }
+
     public static String ethSendTransaction(Function function)
             throws IOException, InterruptedException, ExecutionException {
 
         // 3. Account Lock 해제
-        Admin web3jAdmin = Admin.build(new HttpService(url));
-        PersonalUnlockAccount personalUnlockAccount = web3jAdmin.personalUnlockAccount(from, privateKey).send();
+        BigInteger unlockDuration = BigInteger.valueOf(60L);
 
-        if (personalUnlockAccount.accountUnlocked()) { // unlock 일때
+        try {
+            PersonalUnlockAccount personalUnlockAccount = admin.personalUnlockAccount(address, password, unlockDuration).send();
+            Boolean isUnlocked = personalUnlockAccount.accountUnlocked();
+            System.out.println("account unlock " + isUnlocked);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (true/*personalUnlockAccount.accountUnlocked()*/) { // unlock 일때
 
             //4. account에 대한 nonce값 가져오기.
-            EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
+            EthGetTransactionCount ethGetTransactionCount = admin.ethGetTransactionCount(
                     from, DefaultBlockParameterName.LATEST).sendAsync().get();
 
             BigInteger nonce = ethGetTransactionCount.getTransactionCount();
+            System.out.println(nonce);
 
             //5. Transaction값 제작
             Transaction transaction = Transaction.createFunctionCallTransaction(from, nonce,
@@ -216,7 +242,7 @@ public class EthereumService {
                     FunctionEncoder.encode(function));
 
             // 6. ethereum Call
-            EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).send();
+            EthSendTransaction ethSendTransaction = admin.ethSendTransaction(transaction).send();
 
             // transaction에 대한 transaction Hash값 얻기.
             String transactionHash = ethSendTransaction.getTransactionHash();
@@ -233,7 +259,7 @@ public class EthereumService {
     public static TransactionReceipt getReceipt(String transactionHash) throws IOException {
 
         //8. transaction Hash를 통한 receipt 가져오기.
-        EthGetTransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(transactionHash).send();
+        EthGetTransactionReceipt transactionReceipt = admin.ethGetTransactionReceipt(transactionHash).send();
 
         if(transactionReceipt.getTransactionReceipt().isPresent())
         {

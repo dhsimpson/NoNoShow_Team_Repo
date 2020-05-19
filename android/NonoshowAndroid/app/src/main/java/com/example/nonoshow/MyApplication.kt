@@ -9,11 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
+import com.google.firebase.database.*
 import com.prolificinteractive.materialcalendarview.*
 import java.util.*
 
 class MyApplication : Application() { /*하나의 인스턴스를 가지는 클래스*/
     companion object {
+        var mDBReference : DatabaseReference?  = null
+        var childUpdates : HashMap<String, Object>?  = null
+        var userValue : Map<String, Object>?  = null
+        var userInfo : UserInfo? = null
+        val mDatabace : DatabaseReference = FirebaseDatabase.getInstance().reference
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
         const val IMAGE_BUTTON = 1026
@@ -196,12 +203,40 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         /******
          *이더리움 함수 이름 custSignIn
          *******/
-        fun trySignIn(id : String ="",pw : String="") : String{ /*이더리움으로 부터 "client"->상태 고객 고유 ID와 true값을 받아 고유ID를 반환함*/
+        fun trySignIn(id : String ="",pw : String="",it : View?) : String{ /*이더리움으로 부터 "client"->상태 고객 고유 ID와 true값을 받아 고유ID를 반환함*/
+            FirebaseDatabase.getInstance().reference.child("User_info").addChildEventListener(object:ChildEventListener{
+                override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                    Log.e("trySignIn","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
+                    if(id == dataSnapshot.key){
+                        if(dataSnapshot.child("pw").value == pw){
+                            Log.i("Login : ", "welcome $id")
+                            MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
+                            state = LOGINED
+                            it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
+                        }
+                        else{
+                            Log.i("Login : ", "wrong password")
+                        }
+                    }
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
 
-            MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
-            state = LOGINED
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+
             var result = "err"
-
 
             return result
         }
@@ -209,7 +244,16 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         /******
          * 이더리움 함수 이름 custSignIn
          *******/
-        fun trySignUp(phoneNumber : String, name : String, id : String, pw : String) : Boolean {    /*회원가입*/
+        fun trySignUp(phoneNumber : String, name : String, id : String, age : String, pw : String) : Boolean {    /*회원가입*/
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+
+            userInfo = UserInfo(id, pw, name, age, phoneNumber)
+            userValue = userInfo!!.toMap() as Map<String, Object>?
+
+            childUpdates!!["/User_info/" + id] = userValue as Object
+            mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             return false
         }
     }

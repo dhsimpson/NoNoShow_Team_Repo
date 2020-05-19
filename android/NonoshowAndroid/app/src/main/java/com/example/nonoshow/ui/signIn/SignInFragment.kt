@@ -64,12 +64,12 @@ class SignInFragment : Fragment() {
 
         /*signIn 버튼 클릭시 MyApplication클래스의 trySignIn함수를 불러오게 되고 이더리움 통신을 위한 데이터 또는  토큰을 받아온다*/
         signIn.setOnClickListener{
-            Thread {
+            /*Thread {
                 custLogIn(
                     editText_ID.text.toString(),
                     editText_PW.text.toString()
                 )/* 이더리움서비스클래스메서드호출 */
-            }.start()
+            }.start()*/
             MyApplication.isLogined = true
             MyApplication.ID = textID.text.toString()
 Log.i("ID",MyApplication.ID)
@@ -78,9 +78,7 @@ Log.i("PW",MyApplication.PW)
             val id = editText_ID.text.toString()
             val pw = editText_PW.text.toString()
 
-            trySignIn(id, pw)
-
-            it.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
+            trySignIn(id, pw,it)
         }
         signUp.setOnClickListener{
             MyApplication.isLogined = false
