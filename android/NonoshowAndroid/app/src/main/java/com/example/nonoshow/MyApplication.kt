@@ -22,6 +22,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         var childUpdates : HashMap<String, Object>?  = null
         var userValue : Map<String, Object>?  = null
         val mDatabace : DatabaseReference = FirebaseDatabase.getInstance().reference
+        var managerInfo : ManagerInfo? = null
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
         const val IMAGE_BUTTON = 1026
@@ -253,6 +254,8 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
                             state = LOGINED
                             isLogined = true
+                            managerInfo = ManagerInfo(id, pw, dataSnapshot.child("name").value.toString(), dataSnapshot.child("address").value.toString(),
+                                dataSnapshot.child("phoneNum").value.toString())
                             it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
                         }
                         else{
@@ -281,9 +284,53 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
 
             return result
         }
-        /******
-         * 이더리움 함수 이름 custSignIn
-         *******/
+        val arrayList : ArrayList<CompanyInfo> = ArrayList()
+        fun tryLookComp(name : String? = null) : ArrayList<CompanyInfo>{
+            FirebaseDatabase.getInstance().reference.child("Company_info").addChildEventListener(object:ChildEventListener{
+                override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                    Log.e("Company_info","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
+                    when (name) {
+                        null -> arrayList.add(CompanyInfo(
+                            dataSnapshot.child("id").value.toString(),
+                            dataSnapshot.child("name").value.toString(),
+                            dataSnapshot.child("address").value.toString(),
+                            dataSnapshot.child("phoneNumber").value.toString(),
+                            dataSnapshot.child("imageSrc").value.toString(),
+                            dataSnapshot.child("info").value.toString()
+                        ))
+                        dataSnapshot.key -> arrayList.add(CompanyInfo(
+                            dataSnapshot.child("id").value.toString(),
+                            dataSnapshot.child("name").value.toString(),
+                            dataSnapshot.child("address").value.toString(),
+                            dataSnapshot.child("phoneNumber").value.toString(),
+                            dataSnapshot.child("imageSrc").value.toString(),
+                            dataSnapshot.child("info").value.toString()
+                        ))
+                        else -> Log.i("CompanyInfo : ", "wrong access")
+                    }
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+            Thread.sleep(800)
+            val result = arrayList
+            arrayList.clear()
+            return result
+        }
+
         fun trySignUp(phoneNumber : String, name : String, id : String, age : String, pw : String) : Boolean {    /*회원가입*/
 
             mDBReference = FirebaseDatabase.getInstance().reference
@@ -306,6 +353,20 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             userValue = managerInfo.toMap() as Map<String, Object>?
 
             childUpdates!!["/Manager_info/" + id] = userValue as Object
+            mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            return false
+        }
+
+        fun trySaveComp(phoneNumber : String, name : String, id : String, address : String, info : String, imageSrc : String) : Boolean {    /*회원가입 manager*/
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+
+            val companyInfo = CompanyInfo(id, name, address,
+                phoneNumber,imageSrc,info)
+            userValue = companyInfo.toMap() as Map<String, Object>?
+
+            childUpdates!!["/Company_info/" + name] = userValue as Object
             mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             return false
         }

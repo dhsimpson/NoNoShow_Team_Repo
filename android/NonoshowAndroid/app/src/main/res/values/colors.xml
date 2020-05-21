@@ -12,5 +12,6 @@
     <color name="colorRedBlack">#3b3737</color>
     <color name="colorGreenWhite">#c5edcb</color>
     <color name="colorRedWhite">#ffc2b0</color>
+    <color name="colorCreamyBlue">#4073ff</color>
 </resources>
 <!--android:id="@+id/colorPrimary"-->

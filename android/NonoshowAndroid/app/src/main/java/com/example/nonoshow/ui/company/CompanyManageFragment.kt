@@ -1,5 +1,6 @@
 package com.example.nonoshow.ui.company
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.nonoshow.MyApplication.Companion.LINEAR_LAYOUT
 import com.example.nonoshow.MyApplication.Companion.TEXT_VIEW
 import com.example.nonoshow.MyApplication.Companion.createView
 import com.example.nonoshow.R
+import com.example.nonoshow.modify_comp
 import kotlinx.android.synthetic.main.fragment_company_manage.*
 
 class CompanyManageFragment : Fragment() {
@@ -132,7 +134,8 @@ class CompanyManageFragment : Fragment() {
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             marginHorizontal = 24,
             marginVertical = 10,
-            directionHorizontal = false /*세로*/
+            directionHorizontal = false /*세로*/,
+            backGroundColor = R.color.colorLightGray
         )
         tableRow!!.addView(createView(
             type = TEXT_VIEW,
@@ -154,8 +157,10 @@ class CompanyManageFragment : Fragment() {
             marginBottom = 64
         ))
         block!!.addView(tableRow)
-        block.setOnClickListener{
+        imageButton!!.setOnClickListener{
 /*activity 쌓기*/
+            val intent = Intent(context,modify_comp::class.java)
+            startActivity(intent)
         }
         LL.addView(block)
     }
