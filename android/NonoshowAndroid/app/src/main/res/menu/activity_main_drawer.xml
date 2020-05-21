@@ -18,6 +18,10 @@
             android:id="@+id/nav_booking_List"
             android:title="@string/text_booking_list"/>
         <item
+            android:id="@+id/nav_company_manage"
+            android:title="@string/menu_company_manage"
+            />
+        <item
             android:id="@+id/nav_signUp"
             android:title="@string/menu_signUp"
             android:visible="false"/>

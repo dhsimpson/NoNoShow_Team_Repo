@@ -1,6 +1,7 @@
 package com.example.nonoshow
 
 import android.annotation.SuppressLint
+import android.content.ClipData
 import android.os.Bundle
 import android.util.Log
 import androidx.navigation.findNavController
@@ -13,10 +14,17 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.widget.TextView
 import com.example.nonoshow.MyApplication.Companion.contextForList
+import com.example.nonoshow.MyApplication.Companion.isLogined
+import com.example.nonoshow.MyApplication.Companion.managerMode
+
+
+
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -29,12 +37,12 @@ Log.i("set","created")
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
-        MyApplication.isLogined = false
+        isLogined = false
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking, R.id.nav_booking_List
+                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking, R.id.nav_booking_List,R.id.nav_company_manage
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -72,7 +80,7 @@ Log.i("set","restart!")
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         nickname!!.setOnClickListener{
-            if(!MyApplication.isLogined)
+            if(!isLogined)
                 navController.navigate(R.id.nav_signIn)
         }
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()

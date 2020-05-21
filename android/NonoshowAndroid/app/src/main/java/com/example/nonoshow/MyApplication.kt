@@ -2,9 +2,11 @@ package com.example.nonoshow
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.ClipData
 import android.content.Context
 import android.util.Log
 import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -19,7 +21,6 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         var mDBReference : DatabaseReference?  = null
         var childUpdates : HashMap<String, Object>?  = null
         var userValue : Map<String, Object>?  = null
-        var userInfo : UserInfo? = null
         val mDatabace : DatabaseReference = FirebaseDatabase.getInstance().reference
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
@@ -139,7 +140,6 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             if (weight != 0f)
                                 this.weight = weight
                         }
-                        /*gravity = layout_centerVertical 위치 정렬 - 이상하게 안됨 일단 미구현*/
                         this.setImageResource(imageId)    /*사진도 나중에 구현*/
                         this.background = ContextCompat.getDrawable(context, background)
                         adjustViewBounds = true
@@ -211,6 +211,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                         if(dataSnapshot.child("pw").value == pw){
                             Log.i("Login : ", "welcome $id")
                             MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
+                            isLogined = true
                             state = LOGINED
                             it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
                         }
@@ -241,6 +242,45 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             return result
         }
 
+
+        fun trySignInManager(id : String ="",pw : String="",it : View?) : String{ /*이더리움으로 부터 "client"->상태 고객 고유 ID와 true값을 받아 고유ID를 반환함*/
+            FirebaseDatabase.getInstance().reference.child("Manager_info").addChildEventListener(object:ChildEventListener{
+                override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                    Log.e("trySignInManager","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
+                    if(id == dataSnapshot.key){
+                        if(dataSnapshot.child("pw").value == pw){
+                            Log.i("ManagerLogin : ", "welcome $id")
+                            MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
+                            state = LOGINED
+                            isLogined = true
+                            it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
+                        }
+                        else{
+                            Log.i("ManagerLogin : ", "wrong password")
+                        }
+                    }
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+
+            var result = "err"
+
+            return result
+        }
         /******
          * 이더리움 함수 이름 custSignIn
          *******/
@@ -249,10 +289,23 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             mDBReference = FirebaseDatabase.getInstance().reference
             childUpdates = HashMap()
 
-            userInfo = UserInfo(id, pw, name, age, phoneNumber)
-            userValue = userInfo!!.toMap() as Map<String, Object>?
+            val userInfo = UserInfo(id, pw, name, age, phoneNumber)
+            userValue = userInfo.toMap() as Map<String, Object>?
 
             childUpdates!!["/User_info/" + id] = userValue as Object
+            mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            return false
+        }
+
+        fun trySignUpManager(phoneNumber : String, name : String, id : String, address : String, pw : String) : Boolean {    /*회원가입 manager*/
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+
+            val managerInfo = ManagerInfo(id, pw, name, address, phoneNumber)
+            userValue = managerInfo.toMap() as Map<String, Object>?
+
+            childUpdates!!["/Manager_info/" + id] = userValue as Object
             mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             return false
         }
