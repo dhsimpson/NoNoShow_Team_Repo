@@ -35,4 +35,10 @@
         android:label="@string/text_booking_list"
         tools:layout="@layout/fragment_booking_list" />
 
+    <fragment
+        android:id="@+id/nav_company_manage"
+        android:name="com.example.nonoshow.ui.company.CompanyManageFragment"
+        android:label="@string/menu_company_manage"
+        tools:layout="@layout/fragment_company_manage"/>
+
 </navigation>

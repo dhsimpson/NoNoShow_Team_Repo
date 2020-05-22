@@ -17,8 +17,12 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.nonoshow.EthereumService.custLogIn
 import com.example.nonoshow.MyApplication
+import com.example.nonoshow.MyApplication.Companion.DEFAULT
+import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerMode
+import com.example.nonoshow.MyApplication.Companion.state
 import com.example.nonoshow.MyApplication.Companion.trySignIn
+import com.example.nonoshow.MyApplication.Companion.trySignInManager
 import com.example.nonoshow.R
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
@@ -27,7 +31,7 @@ class SignInFragment : Fragment() {
     private lateinit var signInViewModel: SignInViewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
-        MyApplication.isLogined = false
+        isLogined = false
         val logoButton : ImageView = requireView().findViewById(R.id.logoImage)
         val signIn : Button = requireView().findViewById(R.id.button_signIn)
         val signUp : Button = requireView().findViewById(R.id.button_signUp)
@@ -42,14 +46,14 @@ class SignInFragment : Fragment() {
         }
         var isChecked = false
         checkImage.setOnClickListener{ /*로그인 상태 유지가 클릭됐을 때*/
-            when(isChecked){
+            isChecked = when(isChecked){
                 true-> {
                     checkImage.setImageResource(R.drawable.check_gray)
-                    isChecked = false
+                    false
                 }
                 false->{
                     checkImage.setImageResource(R.drawable.check_colored)
-                    isChecked = true
+                    true
                 }
             }
         }
@@ -64,13 +68,12 @@ class SignInFragment : Fragment() {
 
         /*signIn 버튼 클릭시 MyApplication클래스의 trySignIn함수를 불러오게 되고 이더리움 통신을 위한 데이터 또는  토큰을 받아온다*/
         signIn.setOnClickListener{
-            Thread {
+            /*Thread {
                 custLogIn(
                     editText_ID.text.toString(),
                     editText_PW.text.toString()
                 )/* 이더리움서비스클래스메서드호출 */
-            }.start()
-            MyApplication.isLogined = true
+            }.start()*/
             MyApplication.ID = textID.text.toString()
 Log.i("ID",MyApplication.ID)
             MyApplication.PW = textPW.text.toString()
@@ -78,16 +81,12 @@ Log.i("PW",MyApplication.PW)
             val id = editText_ID.text.toString()
             val pw = editText_PW.text.toString()
 
-            trySignIn(id, pw)
-
-            it.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
+            signIn(id, pw,it)
         }
         signUp.setOnClickListener{
-            MyApplication.isLogined = false
+            isLogined = false
             it.findNavController().navigate(R.id.nav_signUp)
         }
-
-
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,6 +104,8 @@ Log.i("PW",MyApplication.PW)
         super.onResume()
         uiChange(managerMode)
         switch_manager.isChecked = managerMode
+        isLogined = false
+        state = DEFAULT
     }
 
     @SuppressLint("SetTextI18n")
@@ -117,6 +118,16 @@ Log.i("PW",MyApplication.PW)
         else{
             switch_manager.text = "관리자모드 OFF"
             button_signIn.text = "로그인"
+        }
+    }
+    private fun signIn(id : String, pw : String, it : View?){
+        when(managerMode){
+            true->{
+                trySignInManager(id,pw,it)
+            }
+            false->{
+                trySignIn(id,pw,it)
+            }
         }
     }
 }

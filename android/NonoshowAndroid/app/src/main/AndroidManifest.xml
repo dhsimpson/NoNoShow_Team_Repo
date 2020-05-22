@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nonoshow">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -29,9 +30,19 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity> <!-- 팝업 Activity -->
+        <activity
+            android:name=".modify_comp"
+            android:label="@string/menu_company_manage"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
-        <!-- 팝업 Activity -->
-        <activity android:name=".unLoginBookingPopupActivity" android:theme="@android:style/Theme.Dialog" />
+        <activity
+            android:name=".unLoginBookingPopupActivity"
+            android:theme="@android:style/Theme.Dialog" />
     </application>
 
 </manifest>

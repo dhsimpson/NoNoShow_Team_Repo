@@ -1,7 +1,10 @@
 package com.example.nonoshow.ui.signUp
 
 import android.annotation.SuppressLint
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.InputType.TYPE_CLASS_NUMBER
+import android.text.InputType.TYPE_CLASS_TEXT
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +13,12 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import com.example.nonoshow.EthereumService.custSignUp
 import com.example.nonoshow.EthereumServiceKt.Companion.callMethodCompSignUp
 import com.example.nonoshow.MyApplication
 import com.example.nonoshow.MyApplication.Companion.managerMode
+import com.example.nonoshow.MyApplication.Companion.trySignUp
+import com.example.nonoshow.MyApplication.Companion.trySignUpManager
 import com.example.nonoshow.R
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 
@@ -74,6 +80,7 @@ class SignUpFragment : Fragment() { /*회원가입*/
             switch_manager_join.text = "관리자모드 ON"
             Name.hint = "회사 이름"
             age.hint = "주소"
+            age.inputType = TYPE_CLASS_TEXT
             title_SignUP.text = "관리자 회원가입"
         }
         else{
@@ -81,6 +88,7 @@ class SignUpFragment : Fragment() { /*회원가입*/
             switch_manager_join.text = "관리자모드 OFF"
             Name.hint = "이름"
             age.hint = "나이"
+            age.inputType = TYPE_CLASS_NUMBER
             title_SignUP.text = "회원가입"
         }
     }
@@ -91,11 +99,21 @@ class SignUpFragment : Fragment() { /*회원가입*/
                               ageOrAddress : String, isManager : Boolean){
         when(isManager){
             true->{
-                Thread{callMethodCompSignUp(/*name, id, pw, ageOrAddress, phoneNumber*/)}.run()
-
+                Log.i("ageOrAddress.toInt()",""+ageOrAddress)
+                Log.i("name",name)
+                Log.i("id",id)
+                Log.i("pw",pw)
+                Log.i("phone",phoneNumber)
+                Thread{trySignUpManager(phoneNumber,name,id,ageOrAddress,pw)}.start()
             }
             false->{
-                Thread{callMethodCompSignUp(/*phoneNumber, name, id, pw, Uint32(ageOrAddress.toLong())*/)}.run()
+                Log.i("ageOrAddress.toInt()",""+ageOrAddress)
+                Log.i("name",name)
+                Log.i("id",id)
+                Log.i("pw",pw)
+                Log.i("phone",phoneNumber)
+                Thread{trySignUp(phoneNumber,name,id,ageOrAddress,pw)}.start()
+                //Thread{custSignUp(name, id, pw, ageOrAddress.toInt(),phoneNumber)}.start()
             }
         }
     }
