@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.trySaveComp
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_modify_comp.*
 
 class modify_comp : AppCompatActivity() {
@@ -47,6 +48,9 @@ class modify_comp : AppCompatActivity() {
                 Log.i("filePath",filePath!!)
                 confirm(managerInfo!!,filePath!!)
             }
+            setPositionButton.setOnClickListener{
+                takePosition()
+            }
         }
         cancelButton.setOnClickListener{
             cancel()
@@ -67,10 +71,25 @@ class modify_comp : AppCompatActivity() {
     }
 
     private fun confirm(managerInfo : ManagerInfo,filePath : String){
-        trySaveComp(managerInfo.phoneNum, compName.text.toString(), managerInfo.id , compAddress.text.toString(), compInfo.text.toString(), imageButton)
+        if(position != null) {
+            trySaveComp(
+                managerInfo.phoneNum,
+                compName.text.toString(),
+                managerInfo.id,
+                compAddress.text.toString(),
+                compInfo.text.toString(),
+                imageButton
+                ,
+                position!!
+            )
+            //uploadImageS3(filePath)
+            this.finish()
+        }
+    }
+
+    private fun takePosition(){
         val intent = Intent(contextForList,setAddressWithMap::class.java)
         startActivity(intent)
-        //uploadImageS3(filePath)
     }
 
     fun getPicture() {
@@ -114,6 +133,8 @@ class modify_comp : AppCompatActivity() {
         cursor.moveToFirst()
         return cursor.getString(columnIndex)
     }
-
+    companion object{
+        var position : LatLng? = null
+    }
 
 }

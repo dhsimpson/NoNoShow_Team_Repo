@@ -149,6 +149,7 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
         }
         fun settingTableRowClickListener(block : LinearLayout, tableRow : LinearLayout,companyInfo : CompanyInfo){
             tableRow.setOnClickListener{/*선택됨 - 선택된 녀석의 정보 보여주기! + 선택상태를 저장*/
+                setMapLocation(map!!,LatLng(companyInfo.lat,companyInfo.lng))
                 if(selectedInfo != null) {
                     selectedInfo!!.removeView(mapView)
                     selected!!.removeView(selectedInfo) /* 다른녀석이 선택되면 이전 선택된 info 제거*/
@@ -206,6 +207,13 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
                 }
                 selected = block /* 선택 */
                 selectedInfo = info
+            }
+        }
+        fun setMapLocation(map : GoogleMap,position : LatLng) {
+            with(map) {
+                moveCamera(newLatLngZoom(position, 15f))
+                addMarker(MarkerOptions().position(position))
+                mapType = GoogleMap.MAP_TYPE_NORMAL
             }
         }
         var map : GoogleMap? =null

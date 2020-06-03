@@ -8,6 +8,7 @@ import android.view.View
 import android.view.Window
 import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.trySaveComp
+import com.example.nonoshow.modify_comp.Companion.position
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory.newLatLng
 import com.google.android.gms.maps.GoogleMap
@@ -74,7 +75,9 @@ class setAddressWithMap : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnM
             // 마커의 스니펫(간단한 텍스트) 설정
             mOptions.snippet("$latitude, $longitude")
             // LatLng: 위도 경도 쌍을 나타냄
-            mOptions.position(LatLng (latitude, longitude))
+            val position = LatLng(latitude,longitude)
+            mOptions.position(position)
+            modify_comp.position = position
             // 마커(핀) 추가
             selected = mMap.addMarker(mOptions) // 마커추가,화면에출력
         })

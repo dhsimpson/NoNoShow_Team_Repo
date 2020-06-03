@@ -320,7 +320,9 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             dataSnapshot.child("address").value.toString(),
                             dataSnapshot.child("phoneNumber").value.toString(),
                             dataSnapshot.child("imageSrc").value.toString(),
-                            dataSnapshot.child("info").value.toString()
+                            dataSnapshot.child("info").value.toString(),
+                            dataSnapshot.child("lat").value.apply{} as Double,
+                            dataSnapshot.child("lng").value.apply{} as Double
                         )
                         dataSnapshot.key -> companyInfo=CompanyInfo(
                             dataSnapshot.child("id").value.toString(),
@@ -328,7 +330,9 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             dataSnapshot.child("address").value.toString(),
                             dataSnapshot.child("phoneNumber").value.toString(),
                             dataSnapshot.child("imageSrc").value.toString(),
-                            dataSnapshot.child("info").value.toString()
+                            dataSnapshot.child("info").value.toString(),
+                            dataSnapshot.child("lat").value.apply{} as Double,
+                            dataSnapshot.child("lng").value.apply{} as Double
                         )
                         else -> {
                             if(ID == dataSnapshot.child("id").value.toString())
@@ -338,7 +342,10 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                                 dataSnapshot.child("address").value.toString(),
                                 dataSnapshot.child("phoneNumber").value.toString(),
                                 dataSnapshot.child("imageSrc").value.toString(),
-                                dataSnapshot.child("info").value.toString())}
+                                dataSnapshot.child("info").value.toString(),
+                                dataSnapshot.child("lat").value.apply{} as Double,
+                                dataSnapshot.child("lng").value.apply{} as Double
+                            )}
                         }
                     }
                     if(companyInfo != null){
@@ -397,17 +404,18 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             return false
         }
 
-        fun trySaveComp(phoneNumber : String, name : String, id : String, address : String, info : String, view : ImageView) : Boolean {
+        fun trySaveComp(phoneNumber : String, name : String, id : String, address : String, info : String, view : ImageView,position : LatLng) : Boolean {
             uploadImage("$name$id.jpeg",view)
             /*회원가입 manager*/
             mDBReference = FirebaseDatabase.getInstance().reference
             childUpdates = HashMap()
-
+            val Lat = position.latitude
+            val Lng = position.longitude
             val companyInfo = CompanyInfo(id, name, address,
-                phoneNumber, "$name$id.jpeg",info)
+                phoneNumber, "$name$id.jpeg",info,Lat,Lng)
             userValue = companyInfo.toMap() as Map<String, Object>?
 
-            childUpdates!!["/Company_info/" + name] = userValue as Object
+            childUpdates!!["/Company_info/$name"] = userValue as Object
             mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             return false
         }
