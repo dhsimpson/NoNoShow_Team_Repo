@@ -10,18 +10,13 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.example.nonoshow.AWSService.Companion.uploadImageS3
+import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.trySaveComp
 import kotlinx.android.synthetic.main.activity_modify_comp.*
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 class modify_comp : AppCompatActivity() {
     internal val REQUEST_IMAGE_CAPTURE = 500
@@ -73,8 +68,9 @@ class modify_comp : AppCompatActivity() {
 
     private fun confirm(managerInfo : ManagerInfo,filePath : String){
         trySaveComp(managerInfo.phoneNum, compName.text.toString(), managerInfo.id , compAddress.text.toString(), compInfo.text.toString(), imageButton)
+        val intent = Intent(contextForList,setAddressWithMap::class.java)
+        startActivity(intent)
         //uploadImageS3(filePath)
-        this.finish()
     }
 
     fun getPicture() {

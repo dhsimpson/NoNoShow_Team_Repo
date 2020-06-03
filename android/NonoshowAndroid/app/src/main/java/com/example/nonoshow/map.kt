@@ -39,8 +39,6 @@ class map : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
         mapView.getMapAsync(this)
     }
 
-
-
     override fun onMarkerClick(p0: Marker?): Boolean {
         Log.i("map","좌표 : "+ p0!!.position)
         return true
