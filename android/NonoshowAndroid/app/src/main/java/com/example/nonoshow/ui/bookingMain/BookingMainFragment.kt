@@ -18,12 +18,14 @@ import com.example.nonoshow.MyApplication.Companion.CALENDAR
 import com.example.nonoshow.MyApplication.Companion.IMAGE_BUTTON
 import com.example.nonoshow.MyApplication.Companion.LINE
 import com.example.nonoshow.MyApplication.Companion.LINEAR_LAYOUT
+import com.example.nonoshow.MyApplication.Companion.MAPVIEW
 import com.example.nonoshow.MyApplication.Companion.SPINNER
 import com.example.nonoshow.MyApplication.Companion.TEXT_VIEW
 import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.createView
 import com.example.nonoshow.MyApplication.Companion.getImage
 import com.example.nonoshow.MyApplication.Companion.tryLookComp
+import com.google.android.gms.maps.MapView
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import kotlinx.android.synthetic.main.fragment_booking_main.*
 
@@ -137,9 +139,8 @@ class BookingMainFragment : Fragment() {
                     type = LINE,
                     directionHorizontal = true,
                     backGroundColor = R.color.colorGray207)) /*가로선*/
-                info.addView(createView<ImageButton>(  /*사진 추가*/
-                    type = IMAGE_BUTTON,
-                    imageId = R.drawable.logo_transparent
+                info.addView(createView<MapView>(  /*사진 추가*/
+                    type = MAPVIEW
                 ))
                 info.addView(createView<View>(
                     type = LINE,

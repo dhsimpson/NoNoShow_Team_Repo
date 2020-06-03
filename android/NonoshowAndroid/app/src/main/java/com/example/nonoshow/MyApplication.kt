@@ -21,7 +21,13 @@ import java.util.*
 import android.widget.Toast
 import android.graphics.BitmapFactory
 import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
-import com.example.nonoshow.ui.company.CompanyManageFragment.Companion.createABlock
+import com.google.android.gms.maps.CameraUpdate
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import java.io.File
 import java.io.IOException
 
@@ -41,6 +47,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         const val LINE = 1037
         const val CALENDAR = 1048
         const val SPINNER = 1059
+        const val MAPVIEW = 1077
         const val DEFAULT = 8000
         const val LOGINED = 0
         @SuppressLint("StaticFieldLeak")
@@ -208,6 +215,9 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                         }
                         setAdapter(adapter)
                     } as T
+                }
+                MAPVIEW -> {
+                    result = map().mMap as T
                 }
             }
             return result
