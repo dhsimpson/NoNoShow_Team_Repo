@@ -1,9 +1,11 @@
 package com.example.nonoshow
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -21,6 +23,7 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import com.example.nonoshow.EthereumService.*
 import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.isLogined
@@ -61,6 +64,21 @@ Log.i("set","created")
             //custSignUp("test","11","22",88888888,"01015156464")   /*이더리움 연결*/
             //custLogIn("blackcow","12345678")
         }.start()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.d("권한", " 설정 완료")
+            } else {
+                Log.d("권한", " 설정 요청")
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                    1
+                )
+            }
+        }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
