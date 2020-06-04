@@ -75,6 +75,7 @@
         android:id="@+id/imageButton"
         android:gravity="bottom"
         android:shadowColor="@color/colorLogo"
+        android:scaleType = "fitCenter"
         android:layout_width="256dp"
         android:layout_height="256dp"
         android:layout_marginTop="15dp"

@@ -161,7 +161,8 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             if (weight != 0f)
                                 this.weight = weight
                         }
-                        this.setImageResource(imageId)    /*사진도 나중에 구현*/
+                        this.setImageResource(imageId)
+                        this.scaleType = ImageView.ScaleType.FIT_CENTER
                         this.background = ContextCompat.getDrawable(context, background)
                         adjustViewBounds = true
                     } as T
