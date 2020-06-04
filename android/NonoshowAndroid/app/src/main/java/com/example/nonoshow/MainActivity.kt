@@ -1,8 +1,13 @@
 package com.example.nonoshow
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ClipData
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,12 +23,14 @@ import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
+import com.example.nonoshow.EthereumService.*
 import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerMode
-
-
-
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import java.security.Signature
 
 
 class MainActivity : AppCompatActivity() {
@@ -50,10 +57,28 @@ Log.i("set","created")
         contextForList = this
         val webView : WebView = WebView(contextForList)
         webView.apply{loadUrl("textContract.func3()")}
+        getHashKey()
         Thread {
-            EthereumService.getBalance()    /*이더리움 연결*/
-
+            //getCredential()
+            //getBalance()
+            //custSignUp("test","11","22",88888888,"01015156464")   /*이더리움 연결*/
+            //custLogIn("blackcow","12345678")
         }.start()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.d("권한", " 설정 완료")
+            } else {
+                Log.d("권한", " 설정 요청")
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                    1
+                )
+            }
+        }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -107,5 +132,27 @@ Log.i("set","restart!")
             }
         }
     }
+
+    private fun getHashKey() {  /*only for get HashKey*/
+        var packageInfo: PackageInfo? = null
+        try {
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        if (packageInfo == null)
+            Log.e("HashKey", "GashKey:null")
+        for (  signature in packageInfo!!.signatures){
+            try{
+                val md : MessageDigest = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray());
+                Log.d("HashKey",Base64.encodeToString(md.digest(), Base64.DEFAULT))
+            }catch(e : NoSuchAlgorithmException){
+                Log.e("HashKey", "HashKey Error. signature=$signature", e)
+            }
+        }
+
+    }
+
 
 }

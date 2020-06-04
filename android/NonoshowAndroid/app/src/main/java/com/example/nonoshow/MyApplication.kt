@@ -21,7 +21,13 @@ import java.util.*
 import android.widget.Toast
 import android.graphics.BitmapFactory
 import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
-import com.example.nonoshow.ui.company.CompanyManageFragment.Companion.createABlock
+import com.google.android.gms.maps.CameraUpdate
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import java.io.File
 import java.io.IOException
 
@@ -41,6 +47,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         const val LINE = 1037
         const val CALENDAR = 1048
         const val SPINNER = 1059
+        const val MAPVIEW = 1077
         const val DEFAULT = 8000
         const val LOGINED = 0
         @SuppressLint("StaticFieldLeak")
@@ -58,6 +65,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         var PW = "default"
         var isLogined = false
         var loginToken = "" /*서버에서 암호화해서 보내준 녀석을 저장<나중에 업데이트>*/
+        var filePath = ""
         var bookingTextView : TextView? = null
 
         var managerMode : Boolean = false
@@ -153,7 +161,8 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             if (weight != 0f)
                                 this.weight = weight
                         }
-                        this.setImageResource(imageId)    /*사진도 나중에 구현*/
+                        this.setImageResource(imageId)
+                        this.scaleType = ImageView.ScaleType.FIT_CENTER
                         this.background = ContextCompat.getDrawable(context, background)
                         adjustViewBounds = true
                     } as T
@@ -208,6 +217,9 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                         }
                         setAdapter(adapter)
                     } as T
+                }
+                MAPVIEW -> {
+                    result = map().mMap as T
                 }
             }
             return result
@@ -309,7 +321,9 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             dataSnapshot.child("address").value.toString(),
                             dataSnapshot.child("phoneNumber").value.toString(),
                             dataSnapshot.child("imageSrc").value.toString(),
-                            dataSnapshot.child("info").value.toString()
+                            dataSnapshot.child("info").value.toString(),
+                            dataSnapshot.child("lat").value.apply{} as Double,
+                            dataSnapshot.child("lng").value.apply{} as Double
                         )
                         dataSnapshot.key -> companyInfo=CompanyInfo(
                             dataSnapshot.child("id").value.toString(),
@@ -317,7 +331,9 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             dataSnapshot.child("address").value.toString(),
                             dataSnapshot.child("phoneNumber").value.toString(),
                             dataSnapshot.child("imageSrc").value.toString(),
-                            dataSnapshot.child("info").value.toString()
+                            dataSnapshot.child("info").value.toString(),
+                            dataSnapshot.child("lat").value.apply{} as Double,
+                            dataSnapshot.child("lng").value.apply{} as Double
                         )
                         else -> {
                             if(ID == dataSnapshot.child("id").value.toString())
@@ -327,7 +343,10 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                                 dataSnapshot.child("address").value.toString(),
                                 dataSnapshot.child("phoneNumber").value.toString(),
                                 dataSnapshot.child("imageSrc").value.toString(),
-                                dataSnapshot.child("info").value.toString())}
+                                dataSnapshot.child("info").value.toString(),
+                                dataSnapshot.child("lat").value.apply{} as Double,
+                                dataSnapshot.child("lng").value.apply{} as Double
+                            )}
                         }
                     }
                     if(companyInfo != null){
@@ -386,17 +405,18 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             return false
         }
 
-        fun trySaveComp(phoneNumber : String, name : String, id : String, address : String, info : String, view : ImageView) : Boolean {
+        fun trySaveComp(phoneNumber : String, name : String, id : String, address : String, info : String, view : ImageView,position : LatLng) : Boolean {
             uploadImage("$name$id.jpeg",view)
             /*회원가입 manager*/
             mDBReference = FirebaseDatabase.getInstance().reference
             childUpdates = HashMap()
-
+            val Lat = position.latitude
+            val Lng = position.longitude
             val companyInfo = CompanyInfo(id, name, address,
-                phoneNumber, "$name$id.jpeg",info)
+                phoneNumber, "$name$id.jpeg",info,Lat,Lng)
             userValue = companyInfo.toMap() as Map<String, Object>?
 
-            childUpdates!!["/Company_info/" + name] = userValue as Object
+            childUpdates!!["/Company_info/$name"] = userValue as Object
             mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             return false
         }

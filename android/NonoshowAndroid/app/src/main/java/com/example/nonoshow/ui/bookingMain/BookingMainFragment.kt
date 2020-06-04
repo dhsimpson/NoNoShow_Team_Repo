@@ -1,8 +1,12 @@
 package com.example.nonoshow.ui.bookingMain
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +22,7 @@ import com.example.nonoshow.MyApplication.Companion.CALENDAR
 import com.example.nonoshow.MyApplication.Companion.IMAGE_BUTTON
 import com.example.nonoshow.MyApplication.Companion.LINE
 import com.example.nonoshow.MyApplication.Companion.LINEAR_LAYOUT
+import com.example.nonoshow.MyApplication.Companion.MAPVIEW
 import com.example.nonoshow.MyApplication.Companion.SPINNER
 import com.example.nonoshow.MyApplication.Companion.TEXT_VIEW
 import com.example.nonoshow.MyApplication.Companion.contextForList
@@ -26,9 +31,24 @@ import com.example.nonoshow.MyApplication.Companion.getImage
 import com.example.nonoshow.MyApplication.Companion.tryLookComp
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import kotlinx.android.synthetic.main.fragment_booking_main.*
+import android.view.View.inflate
+import androidx.core.app.ActivityCompat
+import com.example.nonoshow.R
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.CameraUpdateFactory.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class BookingMainFragment : Fragment() {
-   // val materialCalendarView : MaterialCalendarView? = createView()
+class BookingMainFragment : Fragment() ,OnMapReadyCallback{
+    override fun onMapReady(p0: GoogleMap?) {
+        map = p0
+        map!!.mapType = options.mapType
+        map!!.uiSettings.isMyLocationButtonEnabled = true
+        map!!.isMyLocationEnabled = true
+        setMapLocation(map!!,position!!)
+    }
+
+    // val materialCalendarView : MaterialCalendarView? = createView()
     private lateinit var bookingMainViewModel: BookingMainViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,6 +66,8 @@ class BookingMainFragment : Fragment() {
         bookingMainViewModel =
             ViewModelProviders.of(this).get(BookingMainViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_booking_main, container, false)
+        mapView!!.onCreate(savedInstanceState)
+        mapView!!.getMapAsync(this)
 
         return root
     }
@@ -127,7 +149,9 @@ class BookingMainFragment : Fragment() {
         }
         fun settingTableRowClickListener(block : LinearLayout, tableRow : LinearLayout,companyInfo : CompanyInfo){
             tableRow.setOnClickListener{/*선택됨 - 선택된 녀석의 정보 보여주기! + 선택상태를 저장*/
+                setMapLocation(map!!,LatLng(companyInfo.lat,companyInfo.lng))
                 if(selectedInfo != null) {
+                    selectedInfo!!.removeView(mapView)
                     selected!!.removeView(selectedInfo) /* 다른녀석이 선택되면 이전 선택된 info 제거*/
                 }
                 val info : LinearLayout? = createView(
@@ -137,10 +161,7 @@ class BookingMainFragment : Fragment() {
                     type = LINE,
                     directionHorizontal = true,
                     backGroundColor = R.color.colorGray207)) /*가로선*/
-                info.addView(createView<ImageButton>(  /*사진 추가*/
-                    type = IMAGE_BUTTON,
-                    imageId = R.drawable.logo_transparent
-                ))
+                info.addView(mapView)
                 info.addView(createView<View>(
                     type = LINE,
                     directionHorizontal = true,
@@ -178,6 +199,7 @@ class BookingMainFragment : Fragment() {
 
                 block.addView(info) /*블록에 정보를 붙임*/
                 tableRow.setOnClickListener{/*위쪽 테이블을 눌렀을경우 INFO 창 제거를 위해*/
+                    info.removeView(mapView)
                     settingTableRowClickListener(block, tableRow,companyInfo)/*INFO 가 제거된 테이블의 setOnClickListener 초기화를 위해*/
                     block.removeView(info)
                     selected = null
@@ -187,10 +209,41 @@ class BookingMainFragment : Fragment() {
                 selectedInfo = info
             }
         }
+        fun setMapLocation(map : GoogleMap,position : LatLng) {
+            with(map) {
+                moveCamera(newLatLngZoom(position, 15f))
+                addMarker(MarkerOptions().position(position))
+                mapType = GoogleMap.MAP_TYPE_NORMAL
+            }
+        }
+        var map : GoogleMap? =null
+        val mapView = MapView(contextForList).apply{
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                1500
+            )
+        }
+        var position : LatLng? = LatLng(37.555744, 126.970431)
+        var options : GoogleMapOptions = GoogleMapOptions().liteMode(true)
     }
     private fun createBlocks() {
         tryLookComp(null,false)
     }
+    private fun setMapLocation(map : GoogleMap,position : LatLng) {
+        with(map) {
+            moveCamera(newLatLngZoom(position, 15f))
+            addMarker(MarkerOptions().position(position))
+            mapType = GoogleMap.MAP_TYPE_NORMAL
+        }
+    }
+    override fun onResume() {
+        mapView.onResume()
+        super.onResume()
+    }
 
+    override fun onDestroy() {
+        mapView.onDestroy()
+        super.onDestroy()
+    }
 
 }

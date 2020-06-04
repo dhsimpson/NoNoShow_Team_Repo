@@ -1,5 +1,7 @@
 package com.example.nonoshow;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
@@ -10,13 +12,17 @@ import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint32;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.admin.Admin;
 import org.web3j.protocol.admin.methods.response.PersonalUnlockAccount;
+import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.EthFilter;
 import org.web3j.protocol.core.methods.request.Transaction;
-import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
@@ -42,34 +48,52 @@ import static org.objectweb.asm.commons.GeneratorAdapter.AND;
 * */
 public class EthereumService {
 
-    private static String url = "https://ropsten.infura.io/v3/4b06de7f86264b748a0e78ed57222891";  /*test넷 url*/
+    private static String url = "http://10.0.2.2:7545";  /*test넷 url*/
     static String contractAddress = MyApplication.Companion.getContextForList().getResources().getString(R.string.smartContractAddress);
     private static String address = MyApplication.Companion.getContextForList().getResources().getString(R.string.myWalletAddress); /*wallet*/
     private static String password = MyApplication.Companion.getContextForList().getResources().getString(R.string.myPrivateKey);
-    private static BigInteger ACOUNT_UNLOCK_DURATION = BigInteger.valueOf(5000);
     private Web3ClientVersion  clientVersion;
     static Admin admin = Admin.build(new HttpService(url));
     static Web3j web3j = Web3j.build(new HttpService(url));
+    private static BigInteger gasLimit= BigInteger.valueOf(20_000_000_000L);
+    // gas price
+    private static BigInteger gasPrice = BigInteger.valueOf(4300000);
+    private static Credentials credentials = Credentials.create(password);
+    private static BigInteger ACOUNT_UNLOCK_DURATION = BigInteger.valueOf(5000);
+    /****/
+    public static Credentials getCredential(){
+        BigInteger privateKeyInBT = new BigInteger(password, 16);
+        ECKeyPair aPair = ECKeyPair.create(privateKeyInBT);
+        Credentials aCredential = Credentials.create(aPair);
+        address = aCredential.getAddress();
+        Log.i("address : ", address);
+        return aCredential;
+    }
+
+
+
+    /****/
+
     public static void getEthClientVersionSync() throws Exception
     {
-
         Web3ClientVersion web3ClientVersion = web3j.web3ClientVersion().send();
         System.out.println(web3ClientVersion.getWeb3ClientVersion());
     }
 
-    public static BigInteger getBalance() {
+    public static BigInteger getBalance() throws Exception {
+        getEthClientVersionSync();
+
+
         EthGetBalance ethGetBalance = null;
         BigInteger result = null;
         try {
             ethGetBalance =
                     web3j.ethGetBalance(address, DefaultBlockParameterName.LATEST).sendAsync().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        assert ethGetBalance != null;
         BigInteger wei = ethGetBalance.getBalance();
-
         result = Convert.fromWei(wei.toString(), Convert.Unit.ETHER).toBigInteger();
         Log.i("balance", result.toString());
         return result;
@@ -115,50 +139,49 @@ public class EthereumService {
  * 		"type": "function"
  * 	}
  */
-    private static String from=address;
     public static void custLogIn(String id,  String pw)
     {
-        from=address;
         try {
-            getEthClientVersionSync();
-            custLogInDetail(id, pw);
+            //getEthClientVersionSync();
+            System.out.println("******************");
+            custLogInDetail(id,pw);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
     public static String custLogInDetail(String id, String pw) throws IOException, ExecutionException, InterruptedException {
 
         // 1. 호출하고자 하는 function 세팅[functionName, parameters]
         Function function = new Function("custLogIn",
                 Arrays.asList(convertStringToBytes32(id),convertStringToBytes32(pw)),
-                Arrays.asList(new TypeReference<Bytes32>() {},new TypeReference<Uint32>(){}, new TypeReference<Bool>(){}));
+                Arrays.asList(new TypeReference<Uint256>(){}));
 
         // 2. ethereum을 function 변수로 통해 호출
         return ethCall(function);
     }
-    public static String ethCall(Function function) throws IOException {
+    public static String ethCall(Function function) throws IOException, ExecutionException, InterruptedException {
 
         //3. transaction 제작
-        Transaction transaction = Transaction.createEthCallTransaction(from, contractAddress,
+        Transaction transaction = Transaction.createEthCallTransaction(address, contractAddress,
                 FunctionEncoder.encode(function));
 
         //4. ethereum 호출후 결과 가져오기
-        EthCall ethCall = null;
-        try {
-            ethCall = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+
+        org.web3j.protocol.core.methods.response.EthCall ethCall =  web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
+
 
         //5. 결과값 decode
+        String value = ethCall.getValue();
+        System.out.println(value);
         List<Type> decode = FunctionReturnDecoder.decode(ethCall.getResult(),
                 function.getOutputParameters());
 
         System.out.println("ethCall.getResult() = " + ethCall.getResult());
-        Number number = new Integer(0);
-        String valueBool = "UNKNOWN";
+        System.out.println("getValue = " + decode.get(0).getValue());
+        System.out.println("getType = " + decode.get(0).getTypeAsString());
+        Number number = 0;
+/**        String valueBool = "UNKNOWN";
         boolean bool = decode.isEmpty();
         if(bool){
             valueBool = "TRUE";
@@ -167,18 +190,30 @@ public class EthereumService {
 
 
         System.out.println("getValue = " + decode.indexOf(number));
-        number = new Integer(1);
+        number = 1;
         System.out.println("getValue = " + decode.indexOf(number));
-        number = new Integer(2);
+        number = 2;
         System.out.println("getValue = " + decode.indexOf(number));
+*/
+        return "";
+    }
+    private static String callSmartContractFunction(
+            Function function, String contractAddress) throws Exception {
 
-        return valueBool;
+        String encodedFunction = FunctionEncoder.encode(function);
+
+        org.web3j.protocol.core.methods.response.EthCall response = web3j.ethCall(
+                Transaction.createEthCallTransaction(
+                        address, contractAddress, encodedFunction),
+                DefaultBlockParameterName.LATEST)
+                .sendAsync().get();
+
+        return response.getValue();
     }
 
 
     public static void custSignUp(String name,String id,String pw,int ageOrAddress,String phoneNumber)
     {
-        from=address;
         try {
             getEthClientVersionSync();
             custSignUpDetail(name, id, pw, ageOrAddress, phoneNumber);
@@ -230,13 +265,13 @@ public class EthereumService {
 
             //4. account에 대한 nonce값 가져오기.
             EthGetTransactionCount ethGetTransactionCount = admin.ethGetTransactionCount(
-                    from, DefaultBlockParameterName.LATEST).sendAsync().get();
+                    address, DefaultBlockParameterName.LATEST).sendAsync().get();
 
             BigInteger nonce = ethGetTransactionCount.getTransactionCount();
             System.out.println(nonce);
 
             //5. Transaction값 제작
-            Transaction transaction = Transaction.createFunctionCallTransaction(from, nonce,
+            Transaction transaction = Transaction.createFunctionCallTransaction(address, nonce,
                     Transaction.DEFAULT_GAS,
                     null, contractAddress,
                     FunctionEncoder.encode(function));
