@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import android.widget.Toast
 import android.graphics.BitmapFactory
+import android.text.TextUtils
 import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -34,6 +35,7 @@ import java.io.IOException
 
 class MyApplication : Application() { /*하나의 인스턴스를 가지는 클래스*/
     companion object {
+        var folderName : String? = null
         var mDBReference : DatabaseReference?  = null
         var childUpdates : HashMap<String, Object>?  = null
         var userValue : Map<String, Object>?  = null
@@ -268,7 +270,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         }
 
 
-        fun trySignInManager(id : String ="",pw : String="",it : View?) : String{ /*이더리움으로 부터 "client"->상태 고객 고유 ID와 true값을 받아 고유ID를 반환함*/
+        fun trySignInManager(id : String ="",pw : String="",it : View?){ /*이더리움으로 부터 "client"->상태 고객 고유 ID와 true값을 받아 고유ID를 반환함*/
             FirebaseDatabase.getInstance().reference.child("Manager_info").addChildEventListener(object:ChildEventListener{
                 override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
                     Log.e("trySignInManager","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
@@ -303,10 +305,6 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             })
-
-            var result = "err"
-
-            return result
         }
         val arrayList : ArrayList<CompanyInfo> = ArrayList()
         fun tryLookComp(name : String? = null,isManager : Boolean,id : String? = null) : ArrayList<CompanyInfo>{

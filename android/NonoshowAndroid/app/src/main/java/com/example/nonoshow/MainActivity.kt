@@ -26,6 +26,7 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.example.nonoshow.EthereumService.*
 import com.example.nonoshow.MyApplication.Companion.contextForList
+import com.example.nonoshow.MyApplication.Companion.folderName
 import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerMode
 import java.security.MessageDigest
@@ -36,6 +37,8 @@ import java.security.Signature
 class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     override fun onCreate(savedInstanceState: Bundle?) {
+        folderName = filesDir.toString()
+        Log.i("folderName", folderName)
 Log.i("set","created")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
