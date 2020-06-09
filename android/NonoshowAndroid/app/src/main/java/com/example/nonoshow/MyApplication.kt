@@ -43,6 +43,12 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         val storage = FirebaseStorage.getInstance()
         val storageReference = storage.reference
         var managerInfo : ManagerInfo? = null
+        var userPhoneNum : String = "default"
+        var reservationCompName : String? = null
+        var ampm : String = "am"
+        var hour : Int = 0
+        var minute : Int = 0
+        var numberOfPerson : Int = 0
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
         const val IMAGE_BUTTON = 1026
@@ -98,7 +104,8 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                 for (i in startNum..endNum) {
                     this[count++] = (i).toString()
                 }
-            }
+            },
+            spinnerType : String = "default"
 
         ): T? {
             val context = contextForList!! /*context 문제*/
@@ -218,6 +225,17 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             )
                         }
                         setAdapter(adapter)
+                        this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                            }
+
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                //TODO("position과 spinner종류를 토대로 뭔가 해보는 function")
+                                afterItemSelected(position,spinnerType)
+                            }
+
+                        }
                     } as T
                 }
                 MAPVIEW -> {
@@ -240,6 +258,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
                             isLogined = true
                             state = LOGINED
+                            userPhoneNum = dataSnapshot.child("phoneNum").value.toString()
                             it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
                         }
                         else{
@@ -456,6 +475,41 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             }.addOnSuccessListener {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 // ...
+            }
+        }
+
+        fun tryBooking(phoneNum : String, userID : String, date : String, time : String, numberOfPerson : String) : Boolean{ // 핸드폰번호, userID(비로그인시 익명으로), 날짜, 시각, 예약인원으로 생성(+현재 상태)
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+
+            val reservationRequest = ReservationRequest(phoneNum, userID, date, time, numberOfPerson,"waiting",reservationCompName)
+            userValue = reservationRequest.toMap() as Map<String, Object>?
+
+            childUpdates!!["/ReservationRequset/" + phoneNum+ "@" + reservationCompName + "@" + date] = userValue as Object
+            mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            return false
+        }
+
+        fun afterItemSelected(index : Int, spinnerType : String){/*리스너로 부터 이 녀석이 실행됨*/
+            /*spinner의 종류를 파악하고*/
+            /*index를 가지고 값을 정해준다.*/
+            when(spinnerType){
+                "ampm"->{
+                    ampm = if(index == 0 )
+                        "am"
+                    else
+                        "pm"
+                }
+                "hour"->{
+                    hour = index + 1
+                }
+                "minute"->{
+                    minute = index
+                }
+                "numberOfPerson"->{
+                    numberOfPerson = index + 1
+                }
             }
         }
     }

@@ -5,7 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.Window
+import com.example.nonoshow.MyApplication.Companion.ID
 import com.example.nonoshow.MyApplication.Companion.bookingTextView
+import com.example.nonoshow.MyApplication.Companion.isLogined
+import com.example.nonoshow.MyApplication.Companion.userPhoneNum
 import kotlinx.android.synthetic.main.unlogin_popup.*
 
 
@@ -21,8 +24,9 @@ class unLoginBookingPopupActivity : Activity() {
             intent.putExtra("result", "Close Popup")
             setResult(RESULT_OK, intent)
             bookingTextView!!.text = "예약하기"
-            bookingTextView!!.setOnClickListener{/*비회원이지만 개인정보를 입력한자의 예약 실행*/
-            }
+            userPhoneNum = editText2.text.toString()
+            ID = editText3.text.toString()
+            isLogined = true
             //액티비티(팝업) 닫기
             finish()
         }
