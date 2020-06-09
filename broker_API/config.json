@@ -1,0 +1,6 @@
+{
+  "url": "ws://127.0.0.1:7545",
+  "walletAddress": "0x64CdF39bd3EB2DFabaA8798342270DF06A4c8dCd",
+  "contractAddress": "0x5ccEdE2632701F63a2928554ada704685006269B",
+  "privateKey": "15896527ce1624fef81faf3158ba7bd75b17cd51922e473a1485dc061a67195c"
+}

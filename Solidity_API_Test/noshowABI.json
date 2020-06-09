@@ -1,0 +1,528 @@
+[
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "compID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "keyID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "string",
+				"name": "compName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "custName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "custPN",
+				"type": "string"
+			},
+			{
+				"internalType": "uint32",
+				"name": "date",
+				"type": "uint32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "time",
+				"type": "uint32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "personnel",
+				"type": "uint32"
+			},
+			{
+				"internalType": "bool",
+				"name": "ack",
+				"type": "bool"
+			}
+		],
+		"name": "ackBook",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "keyID",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "compID",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "date",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "time",
+				"type": "uint32"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "personnel",
+				"type": "uint256"
+			}
+		],
+		"name": "alertToComp",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "keyID",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "ack",
+				"type": "bool"
+			}
+		],
+		"name": "alertToCust",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "keyID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "compID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "date",
+				"type": "uint32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "time",
+				"type": "uint32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "personnel",
+				"type": "uint32"
+			}
+		],
+		"name": "book",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "compID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "date",
+				"type": "uint32"
+			}
+		],
+		"name": "bookList",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "bytes32",
+						"name": "compID",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "keyID",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "string",
+						"name": "compName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "custName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "custPN",
+						"type": "string"
+					},
+					{
+						"internalType": "uint32",
+						"name": "date",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "time",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "personnel",
+						"type": "uint32"
+					},
+					{
+						"internalType": "bool",
+						"name": "isShow",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct NoNoShow.books[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "compID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "string",
+				"name": "phoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "compName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "custName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "custPN",
+				"type": "string"
+			},
+			{
+				"internalType": "uint32",
+				"name": "date",
+				"type": "uint32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "time",
+				"type": "uint32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "personnel",
+				"type": "uint32"
+			}
+		],
+		"name": "callBook",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "phoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "uint32",
+				"name": "idx",
+				"type": "uint32"
+			}
+		],
+		"name": "checkUser",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "bytes32",
+						"name": "compID",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "keyID",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "string",
+						"name": "compName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "custName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "custPN",
+						"type": "string"
+					},
+					{
+						"internalType": "uint32",
+						"name": "date",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "time",
+						"type": "uint32"
+					},
+					{
+						"internalType": "uint32",
+						"name": "personnel",
+						"type": "uint32"
+					},
+					{
+						"internalType": "bool",
+						"name": "isShow",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct NoNoShow.books[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "pw",
+				"type": "string"
+			}
+		],
+		"name": "compLogIn",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "compID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bool",
+				"name": "pass",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "compName",
+				"type": "string"
+			},
+			{
+				"internalType": "uint32",
+				"name": "startTime",
+				"type": "uint32"
+			},
+			{
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "pw",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "addr",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "phoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "img",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "description",
+				"type": "string"
+			}
+		],
+		"name": "compSignUp",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "pw",
+				"type": "string"
+			}
+		],
+		"name": "custLogIn",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "keyID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bool",
+				"name": "pass",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "phoneNumber",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "id",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "pw",
+				"type": "string"
+			},
+			{
+				"internalType": "uint32",
+				"name": "age",
+				"type": "uint32"
+			}
+		],
+		"name": "custSignUp",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "keyID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "compID",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "uint32",
+				"name": "date",
+				"type": "uint32"
+			},
+			{
+				"internalType": "bool",
+				"name": "isShow",
+				"type": "bool"
+			}
+		],
+		"name": "resBook",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
