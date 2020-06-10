@@ -33,6 +33,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import kotlinx.android.synthetic.main.fragment_booking_main.*
 import android.view.View.inflate
 import androidx.core.app.ActivityCompat
+import com.example.nonoshow.MyApplication.Companion.reservationCompName
 import com.example.nonoshow.R
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.CameraUpdateFactory.*
@@ -192,6 +193,8 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
                     height = 300
                 ).apply{
                     this!!.setOnClickListener{
+                        //매장이름을 저장하도록 하여 다른액티비티에서 꺼내쓰자
+                        reservationCompName = companyInfo.name
                         val intent = Intent(contextForList,bookingManager::class.java)
                         root!!.startActivity(intent)
                     }
@@ -237,7 +240,8 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
         }
     }
     override fun onResume() {
-        mapView.onResume()
+        if(mapView != null)
+            mapView.onResume()
         super.onResume()
     }
 

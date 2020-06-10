@@ -20,15 +20,9 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import android.widget.Toast
 import android.graphics.BitmapFactory
-import android.text.TextUtils
+import com.example.nonoshow.ui.bookingList.BookingListFragment
 import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
-import com.google.android.gms.maps.CameraUpdate
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import java.io.File
 import java.io.IOException
 
@@ -43,6 +37,13 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         val storage = FirebaseStorage.getInstance()
         val storageReference = storage.reference
         var managerInfo : ManagerInfo? = null
+        var userPhoneNum : String = "default"
+        var reservationCompName : String? = null
+        var ampm : String = "am"
+        var hour : Int = 1
+        var minute : Int = 0
+        var numberOfPerson : Int = 1
+        var userName : String = "UNKNOWN"
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
         const val IMAGE_BUTTON = 1026
@@ -98,7 +99,8 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                 for (i in startNum..endNum) {
                     this[count++] = (i).toString()
                 }
-            }
+            },
+            spinnerType : String = "default"
 
         ): T? {
             val context = contextForList!! /*context 문제*/
@@ -218,6 +220,17 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             )
                         }
                         setAdapter(adapter)
+                        this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                            }
+
+                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                                //position과 spinner종류를 토대로 뭔가 해보는 function
+                                afterItemSelected(position,spinnerType)
+                            }
+
+                        }
                     } as T
                 }
                 MAPVIEW -> {
@@ -240,6 +253,8 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
                             isLogined = true
                             state = LOGINED
+                            userName = dataSnapshot.child("name").value.toString()
+                            userPhoneNum = dataSnapshot.child("phoneNum").value.toString()
                             it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
                         }
                         else{
@@ -457,6 +472,129 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 // ...
             }
+        }
+
+        fun tryBooking(phoneNum : String, userID : String, date : String, time : String, numberOfPerson : String) : Boolean{ // 핸드폰번호, userID(비로그인시 익명으로), 날짜, 시각, 예약인원으로 생성(+현재 상태)
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+
+            val reservationRequest = ReservationRequest(phoneNum, userID, date, time, numberOfPerson,"waiting",reservationCompName)
+            userValue = reservationRequest.toMap() as Map<String, Object>?
+
+            childUpdates!!["/ReservationRequset/" + phoneNum+ "@" + reservationCompName + "@" + date] = userValue as Object
+            val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
+
+            }
+            return false
+        }
+        fun modifyBooking(request : ReservationRequest,cotext : BookingListFragment) : Boolean{ // 핸드폰번호, userID(비로그인시 익명으로), 날짜, 시각, 예약인원으로 생성(+현재 상태)
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+            userValue = request.toMap() as Map<String, Object>?
+
+            childUpdates!!["/ReservationRequset/" + request.phoneNum+ "@" + request.compName + "@" + request.date] = userValue as Object
+            val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
+                cotext.refresh()
+            }
+            return false
+        }
+
+        fun afterItemSelected(index : Int, spinnerType : String){/*리스너로 부터 이 녀석이 실행됨*/
+            /*spinner의 종류를 파악하고*/
+            /*index를 가지고 값을 정해준다.*/
+            when(spinnerType){
+                "ampm"->{
+                    ampm = if(index == 0 )
+                        "am"
+                    else
+                        "pm"
+                }
+                "hour"->{
+                    hour = index + 1
+                }
+                "minute"->{
+                    minute = index
+                }
+                "numberOfPerson"->{
+                    numberOfPerson = index + 1
+                }
+            }
+        }
+
+        fun tryLookReservation(Name : String/*compName = key?*/) : ArrayList<CompanyInfo>{
+            FirebaseDatabase.getInstance().reference.child("ReservationRequset").addChildEventListener(object:ChildEventListener{
+                override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                    Log.e("ReservationRequset","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
+                    var request : ReservationRequest? = null
+                    if(managerMode) {/*관리자 서비스*/
+                        when (Name) {
+                            null -> {
+                                Log.e("tryLookReservation", "you must put compName")
+                            }
+                            else -> {
+                                if (Name == dataSnapshot.child("compName").value.toString()) {
+                                    request = ReservationRequest(
+                                        dataSnapshot.child("phoneNum").value.toString(),
+                                        dataSnapshot.child("userID").value.toString(),
+                                        dataSnapshot.child("date").value.toString(),
+                                        dataSnapshot.child("time").value.toString(),
+                                        dataSnapshot.child("numberOfPerson").value.toString(),
+                                        dataSnapshot.child("state").value.toString(),
+                                        dataSnapshot.child("compName").value.toString()
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    else{   /*고객 서비스*/
+                        when (Name) {
+                            null -> {
+                                Log.e("tryLookReservation", "you must put compName")
+                            }
+                            else -> {
+                                if (Name == dataSnapshot.child("userID").value.toString()) {
+                                    request = ReservationRequest(
+                                        dataSnapshot.child("phoneNum").value.toString(),
+                                        dataSnapshot.child("userID").value.toString(),
+                                        dataSnapshot.child("date").value.toString(),
+                                        dataSnapshot.child("time").value.toString(),
+                                        dataSnapshot.child("numberOfPerson").value.toString(),
+                                        dataSnapshot.child("state").value.toString(),
+                                        dataSnapshot.child("compName").value.toString()
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    if(request != null){
+                        BookingListFragment.createABlock(request = request)
+                    }
+
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                    Log.i("listen","child changed")
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+            Thread.sleep(800)
+            val result = arrayList
+            arrayList.clear()
+            return result
         }
     }
 }

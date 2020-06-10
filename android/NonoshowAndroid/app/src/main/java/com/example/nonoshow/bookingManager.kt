@@ -25,11 +25,18 @@ import android.util.Log.*
 import java.util.*
 import android.widget.DatePicker
 import androidx.fragment.app.FragmentActivity
+import com.example.nonoshow.MyApplication.Companion.ID
+import com.example.nonoshow.MyApplication.Companion.ampm
+import com.example.nonoshow.MyApplication.Companion.hour
+import com.example.nonoshow.MyApplication.Companion.minute
+import com.example.nonoshow.MyApplication.Companion.numberOfPerson
+import com.example.nonoshow.MyApplication.Companion.tryBooking
 
 
 class bookingManager : AppCompatActivity() {
   private var mDateSetListener: DatePickerDialog.OnDateSetListener? = null
   private val TAG: String = "bookingManager"
+    var dateString : String = "default"
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -55,7 +62,9 @@ class bookingManager : AppCompatActivity() {
     }
     return super.onOptionsItemSelected(item)
   }
-
+    fun finishActivity(){
+        this.finish()
+    }
   fun initialSetting(LL: LinearLayout) {
     LL.addView(createView<View>(
             type = MyApplication.LINE,
@@ -98,7 +107,9 @@ class bookingManager : AppCompatActivity() {
                 monthL = m + 1
                 d(TAG, "onDateSet: mm/dd/yyy: $monthL/$day/$year")
                 date = "$year" + "년 " + "$monthL" + "월 " + "$day" + "일"
+                  dateString = date
                 this!!.text = date
+
               }
 
       this!!.setOnClickListener {
@@ -143,7 +154,8 @@ class bookingManager : AppCompatActivity() {
                       width = 0,
                       height = ViewGroup.LayoutParams.WRAP_CONTENT,
                       weight = .3f,
-                      list = contextForList!!.resources.getStringArray(R.array.time_array)    /*오전, 오후*/
+                      list = contextForList!!.resources.getStringArray(R.array.time_array),    /*오전, 오후*/
+              spinnerType = "ampm"
               )
       )
       textGroup0.addView(
@@ -153,7 +165,8 @@ class bookingManager : AppCompatActivity() {
                       height = ViewGroup.LayoutParams.WRAP_CONTENT,
                       weight = .3f,
                       startNum = 1,       /*시각 1시 ~ 12시*/
-                      endNum = 12
+                      endNum = 12,
+                  spinnerType = "hour"
               )
       )
       textGroup0.addView(
@@ -174,7 +187,8 @@ class bookingManager : AppCompatActivity() {
                       height = ViewGroup.LayoutParams.WRAP_CONTENT,
                       weight = .3f,
                       startNum = 0,
-                      endNum = 59
+                      endNum = 59,
+                  spinnerType = "minute"
               )
       )
       textGroup0.addView(
@@ -204,7 +218,8 @@ class bookingManager : AppCompatActivity() {
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             marginLeft = 64,
             marginTop = 32,
-            textColor = R.color.colorWhite
+            textColor = R.color.colorWhite,
+        spinnerType = "numberOfPerson"
     ))
 
     run {
@@ -257,14 +272,23 @@ class bookingManager : AppCompatActivity() {
             height = 300
     ).apply {
       this!!.setOnClickListener {
+          var time = ""
+          time = if(ampm == "am") {
+              "오전 "+hour+"시"+minute+"분"
+          } else{
+              "오후 "+hour+"시"+minute+"분"
+          }
         when (isLogined) {
           true -> {/*이미 로그인 되었을 경우*/
-
+            //("핸드폰번호, userID, 날짜, 시간, 예약인원,매장이름 으로 데이타를 생성 -> DB에 삽입하기 [MyApplication의 함수를 call]")
+              tryBooking(MyApplication.userPhoneNum!!,ID,dateString,time,numberOfPerson.toString())
+              finishActivity()
           }
-          false -> {    /*비로그인상태일경우*/
+          false -> {    /*비로그인상태일경우 - 매커니즘상 실행 안됨*/
             bookingTextView = this
             val intent = Intent(context, unLoginBookingPopupActivity::class.java)
             startActivity(intent)
+              //("핸드폰번호, userID=name(임시), 날짜, 시간, 예약인원 으로 데이타를 생성 -> DB에 삽입하기")
           }
         }
 
