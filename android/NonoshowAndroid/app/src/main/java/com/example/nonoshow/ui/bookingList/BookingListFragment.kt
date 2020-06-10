@@ -1,6 +1,7 @@
 package com.example.nonoshow.ui.bookingList
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.example.nonoshow.MyApplication.Companion.ID
 import com.example.nonoshow.MyApplication.Companion.IMAGE_BUTTON
 import com.example.nonoshow.MyApplication.Companion.LINEAR_LAYOUT
 import com.example.nonoshow.MyApplication.Companion.TEXT_VIEW
+import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.MyApplication.Companion.modifyBooking
@@ -37,10 +39,16 @@ class BookingListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         instance = this
         LL = LinearLayoutList
-        if(managerMode)/*매니저 서비스*/
-            tryLookReservation(managerInfo!!.name)
-        else /*고객 서비스*/
-            tryLookReservation(ID)
+        if(isLogined) {
+            if (managerMode)/*매니저 서비스*/
+                tryLookReservation(managerInfo!!.name)
+            else /*고객 서비스*/
+                tryLookReservation(ID)
+        }
+        else {
+            Log.i("isLogined","false")
+            //TODO("로그인 해 주세요.같은 글을 보여주기")
+        }
     }
 
     fun refresh(){
