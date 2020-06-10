@@ -484,12 +484,11 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
 
             val reservationRequest = ReservationRequest(phoneNum, userID, date, time, numberOfPerson,"waiting",reservationCompName)
             userValue = reservationRequest.toMap() as Map<String, Object>?
-            val compName = reservationCompName
 
             childUpdates!!["/ReservationRequset/" + phoneNum+ "@" + reservationCompName + "@" + date] = userValue as Object
             val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
-                tryGetToken(compName!!,reservationRequest)
+                tryGetToken(reservationRequest.compName,reservationRequest, isModify = false)
             }
 
             return false
@@ -615,10 +614,12 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             return false
         }
         fun tryGetToken(id : String/*compName = key?*/,reservationRequest : ReservationRequest,isModify : Boolean= false) {
+            Log.i("tryGetToken", "id : "+id)
             FirebaseDatabase.getInstance().reference.child("ID_Token").addChildEventListener(object:ChildEventListener{
                 override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
                     Log.e("ID_Token","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
                     var idtoken : ID_Token?
+                    Log.i("tryGetToken", "dataSnapshot.child_id : "+dataSnapshot.child("id").value.toString())
                     if (id == dataSnapshot.child("id").value.toString()) {
                         idtoken = ID_Token(
                             dataSnapshot.child("id").value.toString(),

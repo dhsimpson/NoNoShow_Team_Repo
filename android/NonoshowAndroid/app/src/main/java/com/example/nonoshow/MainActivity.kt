@@ -29,6 +29,7 @@ import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.folderName
 import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerMode
+import com.example.nonoshow.data.FirebaseMessagingService_
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
@@ -86,6 +87,7 @@ Log.i("set","created")
                 )
             }
         }
+        val firebaseMessagingService_ = FirebaseMessagingService_()
         _firebaseInitSetting()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
