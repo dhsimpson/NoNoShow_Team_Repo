@@ -117,7 +117,7 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
                 width = 0,
                 height = ViewGroup.LayoutParams.WRAP_CONTENT,
                 weight = .33f,
-                imageId = R.drawable.test_photo_1
+                imageId = R.drawable.load_image
             )
             getImage(companyInfo.imageSrc,imageButton!!)
             val textGroup : LinearLayout? = createView(
