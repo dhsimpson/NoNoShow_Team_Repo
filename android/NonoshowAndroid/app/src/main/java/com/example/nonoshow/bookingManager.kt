@@ -218,8 +218,7 @@ class bookingManager : AppCompatActivity() {
             height = ViewGroup.LayoutParams.WRAP_CONTENT,
             marginLeft = 64,
             marginTop = 32,
-            textColor = R.color.colorWhite,
-        spinnerType = "numberOfPerson"
+            textColor = R.color.colorWhite
     ))
 
     run {
@@ -247,7 +246,8 @@ class bookingManager : AppCompatActivity() {
                       endNum = 30,
                       width = 0,
                       height = ViewGroup.LayoutParams.WRAP_CONTENT,
-                      weight = .5f
+                      weight = .5f,
+                  spinnerType = "numberOfPerson"
               )
       )
       LL.addView(textGroup1)

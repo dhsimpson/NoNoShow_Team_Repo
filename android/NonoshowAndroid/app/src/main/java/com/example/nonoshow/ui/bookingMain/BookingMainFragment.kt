@@ -261,7 +261,8 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
     }
 
     override fun onDestroy() {
-        mapView.onDestroy()
+        if(mapView != null)/*life cycle 때문에 */
+            mapView.onDestroy()
         super.onDestroy()
     }
 

@@ -29,12 +29,16 @@ import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.folderName
 import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerMode
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.Signature
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth
     private lateinit var appBarConfiguration: AppBarConfiguration
     override fun onCreate(savedInstanceState: Bundle?) {
         folderName = filesDir.toString()
@@ -82,6 +86,7 @@ Log.i("set","created")
                 )
             }
         }
+        _firebaseInitSetting()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -120,6 +125,7 @@ Log.i("set","restart!")
         var nickname: TextView? = null
         @SuppressLint("StaticFieldLeak")
         var signOutText: TextView? = null
+        var pushToken: String? = null
 
         fun changeState(data: String, index: Int) {
             when (index) {
@@ -156,6 +162,41 @@ Log.i("set","restart!")
         }
 
     }
+    private fun registerPushToken() {
+        //v17.0.0 이전까지는
+        ////var pushToken = FirebaseInstanceId.getInstance().token
+        //v17.0.1 이후부터는 onTokenRefresh()-depriciated
 
+        var uid = FirebaseAuth.getInstance().currentUser!!.uid
+        var map = mutableMapOf<String, Any>()
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult ->
+            pushToken = instanceIdResult.token
+            map["pushtoken"] = pushToken!!
+            FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
+        }
+    }
+    private fun _firebaseInitSetting(){
+        auth = FirebaseAuth.getInstance()
+        auth.signInAnonymously()
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("firebaseInit", "signInAnonymously:success")
+                    val user = auth.currentUser
+                    //updateUI(user)
+                    registerPushToken() //firebase에 알림을위한 토큰
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w("firebaseInit", "signInAnonymously:failure", task.exception)
+                    //updateUI(null)
+                }
+
+                // ...
+            }
+    }
+    public override fun onStart(){
+        super.onStart()
+        val currentUser = auth.currentUser
+    }
 
 }

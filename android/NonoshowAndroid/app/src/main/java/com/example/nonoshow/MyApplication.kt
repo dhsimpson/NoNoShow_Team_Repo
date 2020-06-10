@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import android.widget.Toast
 import android.graphics.BitmapFactory
+import com.example.nonoshow.data.FcmPush
 import com.example.nonoshow.ui.bookingList.BookingListFragment
 import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
 import com.google.android.gms.maps.model.LatLng
@@ -256,6 +257,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             userName = dataSnapshot.child("name").value.toString()
                             userPhoneNum = dataSnapshot.child("phoneNum").value.toString()
                             it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
+                            tryID_Token_Sync(ID_Token(id,MainActivity.pushToken!!))
                         }
                         else{
                             Log.i("Login : ", "wrong password")
@@ -298,6 +300,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             managerInfo = ManagerInfo(id, pw, dataSnapshot.child("name").value.toString(), dataSnapshot.child("address").value.toString(),
                                 dataSnapshot.child("phoneNum").value.toString())
                             it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
+                            tryID_Token_Sync(ID_Token(managerInfo!!.name,MainActivity.pushToken!!))
                         }
                         else{
                             Log.i("ManagerLogin : ", "wrong password")
@@ -481,12 +484,14 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
 
             val reservationRequest = ReservationRequest(phoneNum, userID, date, time, numberOfPerson,"waiting",reservationCompName)
             userValue = reservationRequest.toMap() as Map<String, Object>?
+            val compName = reservationCompName
 
             childUpdates!!["/ReservationRequset/" + phoneNum+ "@" + reservationCompName + "@" + date] = userValue as Object
             val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
-
+                tryGetToken(compName!!,reservationRequest)
             }
+
             return false
         }
         fun modifyBooking(request : ReservationRequest,cotext : BookingListFragment) : Boolean{ // 핸드폰번호, userID(비로그인시 익명으로), 날짜, 시각, 예약인원으로 생성(+현재 상태)
@@ -498,6 +503,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             childUpdates!!["/ReservationRequset/" + request.phoneNum+ "@" + request.compName + "@" + request.date] = userValue as Object
             val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
+                tryGetToken(request.userID!!,request,isModify = true)
                 cotext.refresh()
             }
             return false
@@ -596,5 +602,53 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             arrayList.clear()
             return result
         }
+
+        fun tryID_Token_Sync(id_token : ID_Token) : Boolean{ //푸시알림을 위한 ID-Token 동기화 DB
+            Log.i("tryIDTOKENSYNC",id_token.token)
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+            userValue = id_token.toMap() as Map<String, Object>?
+
+            childUpdates!!["/ID_Token/" + id_token.id] = userValue as Object
+            mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            return false
+        }
+        fun tryGetToken(id : String/*compName = key?*/,reservationRequest : ReservationRequest,isModify : Boolean= false) {
+            FirebaseDatabase.getInstance().reference.child("ID_Token").addChildEventListener(object:ChildEventListener{
+                override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                    Log.e("ID_Token","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
+                    var idtoken : ID_Token?
+                    if (id == dataSnapshot.child("id").value.toString()) {
+                        idtoken = ID_Token(
+                            dataSnapshot.child("id").value.toString(),
+                            dataSnapshot.child("token").value.toString()
+                        )
+                        val state = if(reservationRequest.state == "waiting")  {"대기중"}  else if(reservationRequest.state == "allowed"){"허가됨"} else{"거부됨"}
+                        if(isModify)
+                            FcmPush.sendMessage("예약 상태 변경","예약이 "+state+"으로 변경되었습니다.\n"+ reservationRequest.date+ "  " + reservationRequest.time + "  인원 : " + reservationRequest.numberOfPerson + "명",idtoken!!)
+                        else
+                            FcmPush.sendMessage("예약 요청",reservationRequest.date+ "  " + reservationRequest.time + "  인원 : " + reservationRequest.numberOfPerson + "명",idtoken!!)
+                    }
+
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                    Log.i("listen","child changed")
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+        }
+
     }
 }
