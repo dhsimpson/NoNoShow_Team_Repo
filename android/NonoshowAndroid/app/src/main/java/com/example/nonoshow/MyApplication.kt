@@ -21,6 +21,7 @@ import java.util.*
 import android.widget.Toast
 import android.graphics.BitmapFactory
 import android.text.TextUtils
+import com.example.nonoshow.ui.bookingList.BookingListFragment
 import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -49,6 +50,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         var hour : Int = 0
         var minute : Int = 0
         var numberOfPerson : Int = 0
+        var userName : String = "UNKNOWN"
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
         const val IMAGE_BUTTON = 1026
@@ -258,6 +260,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
                             isLogined = true
                             state = LOGINED
+                            userName = dataSnapshot.child("name").value.toString()
                             userPhoneNum = dataSnapshot.child("phoneNum").value.toString()
                             it!!.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
                         }
@@ -511,6 +514,63 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                     numberOfPerson = index + 1
                 }
             }
+        }
+
+        fun tryLookReservation(compName : String/*compName = key?*/) : ArrayList<CompanyInfo>{
+            FirebaseDatabase.getInstance().reference.child("ReservationRequset").addChildEventListener(object:ChildEventListener{
+                override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                    Log.e("ReservationRequset","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
+                    var request : ReservationRequest? = null
+                    when (compName) {
+                        "ADMINISTRATOR" -> {Log.e("tryLookReservation","you must put compName")}
+                        dataSnapshot.key -> request = ReservationRequest(
+                            dataSnapshot.child("phoneNum").value.toString(),
+                            dataSnapshot.child("userID").value.toString(),
+                            dataSnapshot.child("date").value.toString(),
+                            dataSnapshot.child("time").value.toString(),
+                            dataSnapshot.child("numberOfPerson").value.toString(),
+                            dataSnapshot.child("state").value.toString(),
+                            dataSnapshot.child("compName").value.toString()
+                        )
+                        else -> {
+                            if(compName == dataSnapshot.child("compName").value.toString())
+                            { request = ReservationRequest(
+                                dataSnapshot.child("phoneNum").value.toString(),
+                                dataSnapshot.child("userID").value.toString(),
+                                dataSnapshot.child("date").value.toString(),
+                                dataSnapshot.child("time").value.toString(),
+                                dataSnapshot.child("numberOfPerson").value.toString(),
+                                dataSnapshot.child("state").value.toString(),
+                                dataSnapshot.child("compName").value.toString()
+                            )
+                            }
+                        }
+                    }
+                    if(request != null){
+                        BookingListFragment.createABlock(request = request)
+                    }
+
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                    Log.i("listen","child changed")
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+            Thread.sleep(800)
+            val result = arrayList
+            arrayList.clear()
+            return result
         }
     }
 }
