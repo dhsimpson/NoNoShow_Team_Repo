@@ -20,16 +20,9 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import android.widget.Toast
 import android.graphics.BitmapFactory
-import android.text.TextUtils
 import com.example.nonoshow.ui.bookingList.BookingListFragment
 import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
-import com.google.android.gms.maps.CameraUpdate
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import java.io.File
 import java.io.IOException
 
@@ -233,7 +226,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             }
 
                             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                                //TODO("position과 spinner종류를 토대로 뭔가 해보는 function")
+                                //position과 spinner종류를 토대로 뭔가 해보는 function
                                 afterItemSelected(position,spinnerType)
                             }
 
@@ -490,7 +483,23 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             userValue = reservationRequest.toMap() as Map<String, Object>?
 
             childUpdates!!["/ReservationRequset/" + phoneNum+ "@" + reservationCompName + "@" + date] = userValue as Object
-            mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
+
+            }
+            return false
+        }
+        fun modifyBooking(request : ReservationRequest,cotext : BookingListFragment) : Boolean{ // 핸드폰번호, userID(비로그인시 익명으로), 날짜, 시각, 예약인원으로 생성(+현재 상태)
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+            userValue = request.toMap() as Map<String, Object>?
+
+            childUpdates!!["/ReservationRequset/" + request.phoneNum+ "@" + request.compName + "@" + request.date] = userValue as Object
+            val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
+                cotext.refresh()
+            }
             return false
         }
 

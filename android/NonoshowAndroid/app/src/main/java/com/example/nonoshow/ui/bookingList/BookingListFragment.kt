@@ -13,12 +13,16 @@ import com.example.nonoshow.MyApplication.Companion.createView
 import com.example.nonoshow.R
 import android.widget.LinearLayout
 import android.widget.ImageButton
+import androidx.fragment.app.FragmentTransaction
 import com.example.nonoshow.MyApplication.Companion.ID
 import com.example.nonoshow.MyApplication.Companion.IMAGE_BUTTON
 import com.example.nonoshow.MyApplication.Companion.LINEAR_LAYOUT
 import com.example.nonoshow.MyApplication.Companion.TEXT_VIEW
 import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.managerMode
+import com.example.nonoshow.MyApplication.Companion.modifyBooking
+import com.example.nonoshow.MyApplication.Companion.reservationCompName
+import com.example.nonoshow.MyApplication.Companion.tryBooking
 import com.example.nonoshow.MyApplication.Companion.tryLookReservation
 import com.example.nonoshow.MyApplication.Companion.userName
 import com.example.nonoshow.ReservationRequest
@@ -31,11 +35,17 @@ class BookingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        instance = this
         LL = LinearLayoutList
         if(managerMode)/*매니저 서비스*/
             tryLookReservation(managerInfo!!.name)
         else /*고객 서비스*/
             tryLookReservation(ID)
+    }
+
+    fun refresh(){
+        val transaction : FragmentTransaction = requireFragmentManager().beginTransaction()
+        transaction.detach(this).attach(this).commit()
     }
 
     override fun onCreateView(
@@ -51,6 +61,7 @@ class BookingListFragment : Fragment() {
     }
 
     companion object{
+        var instance : BookingListFragment? = null
         var LL : LinearLayout? = null
         fun createABlock(request : ReservationRequest) {
             if(!managerMode) {
@@ -143,7 +154,11 @@ class BookingListFragment : Fragment() {
                             width = 0,
                             height = ViewGroup.LayoutParams.WRAP_CONTENT,
                             weight = .5f
-                        ))
+                        ).apply{this!!.setOnClickListener{
+                            request.state = "allowed"
+                            modifyBooking(request,instance!!)
+                        }}
+                        )
                         buttonGroup.addView(createView<TextView>(
                             type = TEXT_VIEW,
                             text = "거부",
@@ -154,7 +169,10 @@ class BookingListFragment : Fragment() {
                             width = 0,
                             height = ViewGroup.LayoutParams.WRAP_CONTENT,
                             weight = .5f
-                        ))
+                        ).apply{this!!.setOnClickListener{
+                            request.state = "rejected"
+                            modifyBooking(request,instance!!)
+                        }})
 
                     }/*대기중*/
                     "allowed"->{color = R.color.colorGreenWhite
@@ -169,7 +187,10 @@ class BookingListFragment : Fragment() {
                             width = 0,
                             height = ViewGroup.LayoutParams.WRAP_CONTENT,
                             weight = 1f
-                        ))
+                        ).apply{this!!.setOnClickListener{
+                            request.state = "waiting"
+                            modifyBooking(request,instance!!)
+                        }})
                     }/*허가됨*/
                     "rejected"->{color = R.color.colorRedWhite
                         text = "거부됨"
@@ -183,7 +204,10 @@ class BookingListFragment : Fragment() {
                             width = 0,
                             height = ViewGroup.LayoutParams.WRAP_CONTENT,
                             weight = 1f
-                        ))
+                        ).apply{this!!.setOnClickListener{
+                            request.state = "waiting"
+                            modifyBooking(request,instance!!)
+                        }})
                     }/*거부됨*/
                 }
                 val tableRow : LinearLayout? = createView(
