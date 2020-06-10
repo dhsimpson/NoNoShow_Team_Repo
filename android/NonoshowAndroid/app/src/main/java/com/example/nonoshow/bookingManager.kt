@@ -26,6 +26,7 @@ import java.util.*
 import android.widget.DatePicker
 import androidx.fragment.app.FragmentActivity
 import com.example.nonoshow.MyApplication.Companion.ID
+import com.example.nonoshow.MyApplication.Companion.ampm
 import com.example.nonoshow.MyApplication.Companion.hour
 import com.example.nonoshow.MyApplication.Companion.minute
 import com.example.nonoshow.MyApplication.Companion.numberOfPerson
@@ -61,7 +62,9 @@ class bookingManager : AppCompatActivity() {
     }
     return super.onOptionsItemSelected(item)
   }
-
+    fun finishActivity(){
+        this.finish()
+    }
   fun initialSetting(LL: LinearLayout) {
     LL.addView(createView<View>(
             type = MyApplication.LINE,
@@ -269,11 +272,17 @@ class bookingManager : AppCompatActivity() {
             height = 300
     ).apply {
       this!!.setOnClickListener {
-          val time = "$hour H$minute M"
+          var time = ""
+          time = if(ampm == "am") {
+              "오전 "+hour+"시"+minute+"분"
+          } else{
+              "오후 "+hour+"시"+minute+"분"
+          }
         when (isLogined) {
           true -> {/*이미 로그인 되었을 경우*/
             //("핸드폰번호, userID, 날짜, 시간, 예약인원,매장이름 으로 데이타를 생성 -> DB에 삽입하기 [MyApplication의 함수를 call]")
               tryBooking(MyApplication.userPhoneNum!!,ID,dateString,time,numberOfPerson.toString())
+              finishActivity()
           }
           false -> {    /*비로그인상태일경우 - 매커니즘상 실행 안됨*/
             bookingTextView = this

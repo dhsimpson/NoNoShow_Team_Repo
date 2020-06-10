@@ -47,9 +47,9 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         var userPhoneNum : String = "default"
         var reservationCompName : String? = null
         var ampm : String = "am"
-        var hour : Int = 0
+        var hour : Int = 1
         var minute : Int = 0
-        var numberOfPerson : Int = 0
+        var numberOfPerson : Int = 1
         var userName : String = "UNKNOWN"
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
@@ -516,33 +516,48 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             }
         }
 
-        fun tryLookReservation(compName : String/*compName = key?*/) : ArrayList<CompanyInfo>{
+        fun tryLookReservation(Name : String/*compName = key?*/) : ArrayList<CompanyInfo>{
             FirebaseDatabase.getInstance().reference.child("ReservationRequset").addChildEventListener(object:ChildEventListener{
                 override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
                     Log.e("ReservationRequset","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
                     var request : ReservationRequest? = null
-                    when (compName) {
-                        "ADMINISTRATOR" -> {Log.e("tryLookReservation","you must put compName")}
-                        dataSnapshot.key -> request = ReservationRequest(
-                            dataSnapshot.child("phoneNum").value.toString(),
-                            dataSnapshot.child("userID").value.toString(),
-                            dataSnapshot.child("date").value.toString(),
-                            dataSnapshot.child("time").value.toString(),
-                            dataSnapshot.child("numberOfPerson").value.toString(),
-                            dataSnapshot.child("state").value.toString(),
-                            dataSnapshot.child("compName").value.toString()
-                        )
-                        else -> {
-                            if(compName == dataSnapshot.child("compName").value.toString())
-                            { request = ReservationRequest(
-                                dataSnapshot.child("phoneNum").value.toString(),
-                                dataSnapshot.child("userID").value.toString(),
-                                dataSnapshot.child("date").value.toString(),
-                                dataSnapshot.child("time").value.toString(),
-                                dataSnapshot.child("numberOfPerson").value.toString(),
-                                dataSnapshot.child("state").value.toString(),
-                                dataSnapshot.child("compName").value.toString()
-                            )
+                    if(managerMode) {/*관리자 서비스*/
+                        when (Name) {
+                            null -> {
+                                Log.e("tryLookReservation", "you must put compName")
+                            }
+                            else -> {
+                                if (Name == dataSnapshot.child("compName").value.toString()) {
+                                    request = ReservationRequest(
+                                        dataSnapshot.child("phoneNum").value.toString(),
+                                        dataSnapshot.child("userID").value.toString(),
+                                        dataSnapshot.child("date").value.toString(),
+                                        dataSnapshot.child("time").value.toString(),
+                                        dataSnapshot.child("numberOfPerson").value.toString(),
+                                        dataSnapshot.child("state").value.toString(),
+                                        dataSnapshot.child("compName").value.toString()
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    else{   /*고객 서비스*/
+                        when (Name) {
+                            null -> {
+                                Log.e("tryLookReservation", "you must put compName")
+                            }
+                            else -> {
+                                if (Name == dataSnapshot.child("userID").value.toString()) {
+                                    request = ReservationRequest(
+                                        dataSnapshot.child("phoneNum").value.toString(),
+                                        dataSnapshot.child("userID").value.toString(),
+                                        dataSnapshot.child("date").value.toString(),
+                                        dataSnapshot.child("time").value.toString(),
+                                        dataSnapshot.child("numberOfPerson").value.toString(),
+                                        dataSnapshot.child("state").value.toString(),
+                                        dataSnapshot.child("compName").value.toString()
+                                    )
+                                }
                             }
                         }
                     }

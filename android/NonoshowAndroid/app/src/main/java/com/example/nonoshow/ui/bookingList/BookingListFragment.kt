@@ -13,6 +13,7 @@ import com.example.nonoshow.MyApplication.Companion.createView
 import com.example.nonoshow.R
 import android.widget.LinearLayout
 import android.widget.ImageButton
+import com.example.nonoshow.MyApplication.Companion.ID
 import com.example.nonoshow.MyApplication.Companion.IMAGE_BUTTON
 import com.example.nonoshow.MyApplication.Companion.LINEAR_LAYOUT
 import com.example.nonoshow.MyApplication.Companion.TEXT_VIEW
@@ -34,7 +35,7 @@ class BookingListFragment : Fragment() {
         if(managerMode)/*매니저 서비스*/
             tryLookReservation(managerInfo!!.name)
         else /*고객 서비스*/
-            tryLookReservation(userName)
+            tryLookReservation(ID)
     }
 
     override fun onCreateView(
@@ -62,7 +63,7 @@ class BookingListFragment : Fragment() {
                 )
                 val textView: TextView? = createView(
                     type = TEXT_VIEW,
-                    text = "흥부네오리",
+                    text = request.compName,
                     textSize = 24f,
                     width = ViewGroup.LayoutParams.MATCH_PARENT,
                     height = ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -70,7 +71,7 @@ class BookingListFragment : Fragment() {
                 )
                 val textViewSub: TextView? = createView(
                     type = TEXT_VIEW,
-                    text = "예약날짜 : 2020년 5월 13일 \n예약시간 : 오후 7시 30분\n 상태 : 예약 허용 대기중", /* 날짜 등 */
+                    text = "예약날짜 : "+ request.date + "\n예약시간 : " + request.time +"\n 상태 : "+request.state, /* 날짜 등 */
                     textColor = R.color.colorGray140,
                     textSize = 16f,
                     width = ViewGroup.LayoutParams.MATCH_PARENT,
