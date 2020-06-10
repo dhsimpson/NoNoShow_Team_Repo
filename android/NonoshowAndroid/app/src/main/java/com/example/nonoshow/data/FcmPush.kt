@@ -8,7 +8,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import okhttp3.*
 import java.io.IOException
-
+/****************
+ * https://beomseok95.tistory.com/119?category=1031942 을 참고하였음.
+ * *************/
 class FcmPush() {
     companion object {
         val JSON = MediaType.parse("application/json; charset=utf-8")//Post전송 JSON Type
