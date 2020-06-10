@@ -33,6 +33,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import kotlinx.android.synthetic.main.fragment_booking_main.*
 import android.view.View.inflate
 import androidx.core.app.ActivityCompat
+import androidx.core.view.children
 import com.example.nonoshow.MyApplication.Companion.reservationCompName
 import com.example.nonoshow.R
 import com.google.android.gms.maps.*
@@ -81,6 +82,8 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
         var selected : LinearLayout? = null
         @SuppressLint("StaticFieldLeak")
         var selectedInfo : LinearLayout? = null
+        var selectedtableRow : LinearLayout? = null
+        var selectedCompanyInfo : CompanyInfo? = null
         fun DBListenerClient(companyInfo : CompanyInfo){
             createABlock(LL!!,companyInfo)
         }
@@ -114,7 +117,7 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
                 width = 0,
                 height = ViewGroup.LayoutParams.WRAP_CONTENT,
                 weight = .33f,
-                imageId = R.drawable.test_photo_1
+                imageId = R.drawable.load_image
             )
             getImage(companyInfo.imageSrc,imageButton!!)
             val textGroup : LinearLayout? = createView(
@@ -150,10 +153,18 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
         }
         fun settingTableRowClickListener(block : LinearLayout, tableRow : LinearLayout,companyInfo : CompanyInfo){
             tableRow.setOnClickListener{/*선택됨 - 선택된 녀석의 정보 보여주기! + 선택상태를 저장*/
+                Log.i("clicked","!!")
+                map!!.clear()   /*마커 제거*/
                 setMapLocation(map!!,LatLng(companyInfo.lat,companyInfo.lng))
                 if(selectedInfo != null) {
+                    settingTableRowClickListener(selected!!, selectedtableRow!!,selectedCompanyInfo!!)
                     selectedInfo!!.removeView(mapView)
                     selected!!.removeView(selectedInfo) /* 다른녀석이 선택되면 이전 선택된 info 제거*/
+                    selectedInfo = null
+                    selected = null
+                    selectedtableRow = null
+                    selectedCompanyInfo = null
+                    Log.i("remove","success")
                 }
                 val info : LinearLayout? = createView(
                     type = LINEAR_LAYOUT
@@ -207,9 +218,13 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
                     block.removeView(info)
                     selected = null
                     selectedInfo = null
+                    selectedtableRow = null
+                    selectedCompanyInfo = null
                 }
                 selected = block /* 선택 */
                 selectedInfo = info
+                selectedtableRow = tableRow
+                selectedCompanyInfo = companyInfo
             }
         }
         fun setMapLocation(map : GoogleMap,position : LatLng) {
@@ -246,7 +261,8 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
     }
 
     override fun onDestroy() {
-        mapView.onDestroy()
+        if(mapView != null)/*life cycle 때문에 */
+            mapView.onDestroy()
         super.onDestroy()
     }
 

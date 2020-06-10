@@ -88,7 +88,7 @@ class CompanyManageFragment : Fragment() {
                 width = 0,
                 height = ViewGroup.LayoutParams.WRAP_CONTENT,
                 weight = .33f,
-                imageId = R.drawable.test_photo_1
+                imageId = R.drawable.load_image
             )
             val image = imageButton as ImageView
             Log.i("sendRequest", companyInfo.imageSrc)
