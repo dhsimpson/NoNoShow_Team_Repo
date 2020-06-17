@@ -16,6 +16,10 @@ public class ReservationRequest {
         // Default constructor required for calls to DataSnapshot.getValue(FirebasePost.class)
     }
 
+    public ReservationRequest duplicate(){
+        ReservationRequest result = new ReservationRequest(phoneNum, userID, date, time,numberOfPerson, state, compName);
+        return result;
+    }
     public ReservationRequest(String phoneNum, String userID, String date, String time,
                     String numberOfPerson, String state, String compName) {
         this.phoneNum = phoneNum;

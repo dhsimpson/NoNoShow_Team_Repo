@@ -502,6 +502,19 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
             childUpdates!!["/ReservationRequset/" + request.phoneNum+ "@" + request.compName + "@" + request.date] = userValue as Object
             val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
             uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
+                if( request.state == "allowed") {
+                    run {
+                        val requestCopy = request.duplicate()
+                        requestCopy.state = "unknown"
+                        userValue = requestCopy.toMap() as Map<String, Object>?
+                        childUpdates!!["/showNoShow/" + request.phoneNum + "@" + request.compName + "@" + request.date] =
+                            userValue as Object
+                        mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+                    }
+                }
+                else{
+                    TODO("관리자 유저가 예약을 취소시켰을 경우에 키를가지고 노쇼블록에서 삭제해야함.")
+                }
                 tryGetToken(request.userID!!,request,isModify = true)
                 cotext.refresh()
             }

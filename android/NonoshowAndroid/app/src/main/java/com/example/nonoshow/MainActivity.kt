@@ -57,7 +57,7 @@ Log.i("set","created")
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking, R.id.nav_booking_List,R.id.nav_company_manage
+                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking, R.id.nav_booking_List,R.id.nav_company_manage,R.id.nav_noshow_manager
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
