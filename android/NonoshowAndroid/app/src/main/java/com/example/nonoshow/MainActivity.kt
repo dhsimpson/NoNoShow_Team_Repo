@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var appBarConfiguration: AppBarConfiguration
     override fun onCreate(savedInstanceState: Bundle?) {
+        _firebaseInitSetting()
+        val currentUser = auth.currentUser
         folderName = filesDir.toString()
         Log.i("folderName", folderName)
 Log.i("set","created")
@@ -81,9 +83,7 @@ Log.i("set","created")
                 )
             }
         }
-        val currentUser = auth.currentUser
         val firebaseMessagingService_ = FirebaseMessagingService_()
-        _firebaseInitSetting()
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

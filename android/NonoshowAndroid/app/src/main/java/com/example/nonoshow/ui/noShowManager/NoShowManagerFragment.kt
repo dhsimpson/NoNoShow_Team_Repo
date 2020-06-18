@@ -88,7 +88,7 @@ class NoShowManagerFragment : Fragment(){
                 Log.i("noShowManager","정상")
                 val requestDateTime = getDateTime(request)
                 val current = LocalDateTime.now()
-                val permission = permissionModifyNoshow(requestDateTime, current, 20)
+                permission = permissionModifyNoshow(requestDateTime, current, 20)
             } else {
                 TODO("VERSION.SDK_INT < O")
             }
@@ -105,7 +105,7 @@ class NoShowManagerFragment : Fragment(){
                     backGroundColor = color
                 )
                 when(request.state){
-                    "show"->{color = R.color.colorLightGray
+                    "show"->{color = R.color.colorGreenWhite
                         text = if(state == stateEnum.yet){"아직 노쇼등록을 할 수 없음"}else if(state == stateEnum.late){"마감된 기록 : 변경불가능"} else{"show"}
                         if(permission){
                             buttonGroup!!.addView(createView<TextView>(
@@ -115,16 +115,15 @@ class NoShowManagerFragment : Fragment(){
                                 background = R.drawable.edit_text_customize_primary,
                                 textAlignCenter = true,
                                 textColor = R.color.colorPrimary,
-                                width = 0,
-                                height = ViewGroup.LayoutParams.WRAP_CONTENT,
-                                weight = 1f
+                                width = ViewGroup.LayoutParams.MATCH_PARENT,
+                                height = 300
                             ).apply{this!!.setOnClickListener{
                                 request.state = "noShow"
                                 modifyShowNoShow(request,instance!!)
                             }})
                             }
                     }/*show*/
-                    "noShow"->{color = R.color.colorGreenWhite
+                    "noShow"->{color = R.color.colorRedWhite
                         text = if(state == stateEnum.late){"마감된 기록 : 변경불가능"} else{"noShow"}
                         if(permission){
                             buttonGroup!!.addView(createView<TextView>(
@@ -134,9 +133,8 @@ class NoShowManagerFragment : Fragment(){
                                 background = R.drawable.edit_text_customize_primary,
                                 textAlignCenter = true,
                                 textColor = R.color.colorPrimary,
-                                width = 0,
-                                height = ViewGroup.LayoutParams.WRAP_CONTENT,
-                                weight = 1f
+                                width = ViewGroup.LayoutParams.MATCH_PARENT,
+                                height = 300
                             ).apply{this!!.setOnClickListener{
                                 request.state = "show"
                                 modifyShowNoShow(request,instance!!)
@@ -148,12 +146,12 @@ class NoShowManagerFragment : Fragment(){
                     type = LINEAR_LAYOUT,
                     directionHorizontal = true, /*가로*/
                     width = ViewGroup.LayoutParams.MATCH_PARENT,
-                    height = 600,
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT,
                     backGroundColor = color
                 )
                 val textView: TextView? = createView(
                     type = TEXT_VIEW,
-                    text = text,
+                    text = "예약ID : "+ request.userID,
                     textSize = 24f,
                     width = ViewGroup.LayoutParams.MATCH_PARENT,
                     height = ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -161,7 +159,7 @@ class NoShowManagerFragment : Fragment(){
                 )
                 val textViewSub: TextView? = createView(
                     type = TEXT_VIEW,
-                    text = "예약날짜 : "+ request.date + "\n예약시간 : " + request.time +"\n 상태 : $text \n 신뢰도 : $randomValue%", /* 날짜 등 */
+                    text = "예약날짜 : "+ request.date + "\n예약시간 : " + request.time +"\n상태 : $text \n인원 : ${request.numberOfPerson}\n핸드폰번호 : ${request.phoneNum}", /* 날짜 등 */
                     textColor = R.color.colorGray140,
                     textSize = 16f,
                     width = ViewGroup.LayoutParams.MATCH_PARENT,
@@ -182,7 +180,7 @@ class NoShowManagerFragment : Fragment(){
                 val textGroup: LinearLayout? = createView(
                     type = LINEAR_LAYOUT,
                     width = 0,
-                    height = ViewGroup.LayoutParams.MATCH_PARENT,
+                    height = ViewGroup.LayoutParams.WRAP_CONTENT,
                     weight = .67f,
                     directionHorizontal = false, /*세로*/
                     marginHorizontal = 64,
@@ -224,7 +222,7 @@ class NoShowManagerFragment : Fragment(){
             val year : Int = stringArray[0].toInt()
 
             stringArray = stringArray[1].split("월 ")
-            val month : Int = stringArray[0].toInt() -1
+            val month : Int = stringArray[0].toInt()
 
             stringArray = stringArray[1].split("일")
             val day : Int = stringArray[0].toInt()
@@ -301,16 +299,19 @@ class NoShowManagerFragment : Fragment(){
             } else {
                 TODO("VERSION.SDK_INT < O")
             }
+            Log.i("year",year.toString())
             val month = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 requestDate.month.value
             } else {
                 TODO("VERSION.SDK_INT < O")
             }
+            Log.i("month",month.toString())
             val day = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 requestDate.dayOfMonth
             } else {
                 TODO("VERSION.SDK_INT < O")
             }
+            Log.i("day",day.toString())
             val yearM = year-1
             var result = yearM * 365 + (yearM/4) - (yearM / 100) + (yearM / 400)
             val c = if((year%4 == 0) &&((year%100 !=0) || (year%400 == 0) )){1} else{0}
@@ -353,6 +354,7 @@ class NoShowManagerFragment : Fragment(){
                     result += 334 + day + c
                 }
             }
+            Log.i("dateToInt",result.toString())
             return result
         }
 
@@ -367,6 +369,7 @@ class NoShowManagerFragment : Fragment(){
             } else {
                 TODO("VERSION.SDK_INT < O")
             }
+            Log.i("timeToInt",(hour * 60 + minute).toString())
             return hour * 60 + minute
         }
 
