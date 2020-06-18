@@ -4,11 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.view.Window
-import com.example.nonoshow.MyApplication.Companion.managerInfo
-import com.example.nonoshow.MyApplication.Companion.trySaveComp
-import com.example.nonoshow.modify_comp.Companion.position
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory.newLatLng
 import com.google.android.gms.maps.GoogleMap
@@ -17,7 +13,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.android.synthetic.main.activity_modify_comp.*
 import kotlinx.android.synthetic.main.activity_set_address_with_map.*
 
 class setAddressWithMap : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{

@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
-import com.example.nonoshow.MyApplication
 import com.example.nonoshow.MyApplication.Companion.LINE
 import com.example.nonoshow.MyApplication.Companion.createView
 import com.example.nonoshow.R
@@ -23,12 +22,8 @@ import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.MyApplication.Companion.modifyBooking
-import com.example.nonoshow.MyApplication.Companion.reservationCompName
-import com.example.nonoshow.MyApplication.Companion.tryBooking
 import com.example.nonoshow.MyApplication.Companion.tryLookReservation
-import com.example.nonoshow.MyApplication.Companion.userName
 import com.example.nonoshow.ReservationRequest
-import kotlinx.android.synthetic.main.fragment_booking_list.*
 import kotlin.random.Random
 
 class BookingListFragment : Fragment() {
@@ -38,7 +33,7 @@ class BookingListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instance = this
-        LL = LinearLayoutList
+        LL = requireView().findViewById(R.id.LinearLayoutList) as LinearLayout
         if(isLogined) {
             if (managerMode)/*매니저 서비스*/
                 tryLookReservation(managerInfo!!.name)

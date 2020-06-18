@@ -22,6 +22,10 @@
             android:title="@string/menu_company_manage"
             />
         <item
+            android:id="@+id/nav_noshow_manager"
+            android:title="@string/menu_noshow_manager"
+            />
+        <item
             android:id="@+id/nav_signUp"
             android:title="@string/menu_signUp"
             android:visible="false"/>

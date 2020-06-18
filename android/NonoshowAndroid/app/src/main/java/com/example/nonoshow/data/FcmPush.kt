@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.nonoshow.ID_Token
 import com.example.nonoshow.MyApplication
 import com.example.nonoshow.R
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import okhttp3.*
 import java.io.IOException

@@ -41,4 +41,10 @@
         android:label="@string/menu_company_manage"
         tools:layout="@layout/fragment_company_manage"/>
 
+    <fragment
+        android:id="@+id/nav_noshow_manager"
+        android:name="com.example.nonoshow.ui.noShowManager.NoShowManagerFragment"
+        android:label="@string/menu_noshow_manager"
+        tools:layout="@layout/fragment_noshow"/>
+
 </navigation>
