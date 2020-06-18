@@ -1,6 +1,5 @@
 package com.example.nonoshow
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -22,7 +21,8 @@ import android.widget.Toast
 import android.graphics.BitmapFactory
 import com.example.nonoshow.data.FcmPush
 import com.example.nonoshow.ui.bookingList.BookingListFragment
-import com.example.nonoshow.ui.bookingMain.BookingMainFragment.Companion.DBListenerClient
+import com.example.nonoshow.ui.bookingMain.BookingMainFragment
+import com.example.nonoshow.ui.noShowManager.NoShowManagerFragment
 import com.google.android.gms.maps.model.LatLng
 import java.io.File
 import java.io.IOException
@@ -54,7 +54,6 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         const val MAPVIEW = 1077
         const val DEFAULT = 8000
         const val LOGINED = 0
-        @SuppressLint("StaticFieldLeak")
         var contextForList: Context? = null
         var state = DEFAULT /*내 상태 저장*/
         fun logout() {
@@ -367,7 +366,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                     }
                     if(companyInfo != null){
                         when(isManager){
-                            false->{ DBListenerClient(companyInfo = companyInfo)  }
+                            false->{ BookingMainFragment.DBListenerClient(companyInfo = companyInfo)  }
                             true->{ CompanyManageFragment.DBlistener(companyInfo) }
                         }
                     }
@@ -505,7 +504,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                 if( request.state == "allowed") {
                     run {
                         val requestCopy = request.duplicate()
-                        requestCopy.state = "unknown"
+                        requestCopy.state = "show"
                         userValue = requestCopy.toMap() as Map<String, Object>?
                         childUpdates!!["/showNoShow/" + request.phoneNum + "@" + request.compName + "@" + request.date] =
                             userValue as Object
@@ -516,6 +515,20 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                     TODO("관리자 유저가 예약을 취소시켰을 경우에 키를가지고 노쇼블록에서 삭제해야함.")
                 }
                 tryGetToken(request.userID!!,request,isModify = true)
+                cotext.refresh()
+            }
+            return false
+        }
+
+        fun modifyShowNoShow(request : ReservationRequest,cotext : NoShowManagerFragment) : Boolean{ // 핸드폰번호, userID(비로그인시 익명으로), 날짜, 시각, 예약인원으로 생성(+현재 상태)
+
+            mDBReference = FirebaseDatabase.getInstance().reference
+            childUpdates = HashMap()
+            userValue = request.toMap() as Map<String, Object>?
+
+            childUpdates!!["/showNoShow/" + request.phoneNum+ "@" + request.compName + "@" + request.date] = userValue as Object
+            val uploadTask = mDBReference!!.updateChildren(childUpdates as Map<String, Any>)
+            uploadTask.addOnSuccessListener {/*성공적으로 수정완료*/
                 cotext.refresh()
             }
             return false
@@ -643,6 +656,59 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                             FcmPush.sendMessage("예약 상태 변경","예약이 "+state+"으로 변경되었습니다.\n"+ reservationRequest.date+ "  " + reservationRequest.time + "  인원 : " + reservationRequest.numberOfPerson + "명",idtoken!!)
                         else
                             FcmPush.sendMessage("예약 요청",reservationRequest.date+ "  " + reservationRequest.time + "  인원 : " + reservationRequest.numberOfPerson + "명",idtoken!!)
+                    }
+
+                }
+                override fun onCancelled(p0: DatabaseError) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                    Log.i("listen","child changed")
+                }
+
+                override fun onChildRemoved(p0: DataSnapshot) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+            })
+        }
+
+        fun tryLookShowNoShowList(Name : String/*compName = key?*/){
+            Log.i("tryLookShowNoShowList", "name : "+Name)
+            FirebaseDatabase.getInstance().reference.child("showNoShow").addChildEventListener(object:ChildEventListener{
+
+                override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                    Log.e("showNoShow","key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1)
+                    var request : ReservationRequest? = null
+                    if(managerMode) {/*관리자 서비스*/
+                        when (Name) {
+                            null -> {
+                                Log.e("tryLookShowNoShowList", "you must put compName")
+                            }
+                            else -> {
+                                if (Name == dataSnapshot.child("compName").value.toString()) {
+                                    request = ReservationRequest(
+                                        dataSnapshot.child("phoneNum").value.toString(),
+                                        dataSnapshot.child("userID").value.toString(),
+                                        dataSnapshot.child("date").value.toString(),
+                                        dataSnapshot.child("time").value.toString(),
+                                        dataSnapshot.child("numberOfPerson").value.toString(),
+                                        dataSnapshot.child("state").value.toString(),
+                                        dataSnapshot.child("compName").value.toString()
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    else{   /*고객 서비스*/
+                        Log.i("tryLookShowNoShowList","you are not manager")
+                    }
+                    if(request != null){
+                        NoShowManagerFragment.createABlock(request = request)
                     }
 
                 }

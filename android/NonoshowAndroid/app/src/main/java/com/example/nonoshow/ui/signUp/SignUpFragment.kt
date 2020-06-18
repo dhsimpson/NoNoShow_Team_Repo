@@ -1,7 +1,6 @@
 package com.example.nonoshow.ui.signUp
 
 import android.annotation.SuppressLint
-import android.graphics.Typeface
 import android.os.Bundle
 import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.InputType.TYPE_CLASS_TEXT
@@ -13,8 +12,6 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
-import com.example.nonoshow.EthereumService.custSignUp
-import com.example.nonoshow.EthereumServiceKt.Companion.callMethodCompSignUp
 import com.example.nonoshow.MyApplication
 import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.MyApplication.Companion.trySignUp

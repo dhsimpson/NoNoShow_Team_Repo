@@ -1,28 +1,15 @@
 package com.example.nonoshow
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
 import com.example.nonoshow.MyApplication.Companion.contextForList
-import network.pocket.eth.PocketEth
-import org.web3j.abi.datatypes.generated.Uint32
-import org.web3j.crypto.Wallet
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.response.EthGetBalance
 import org.web3j.utils.Convert
 import java.util.concurrent.ExecutionException
 import org.web3j.protocol.core.methods.response.Web3ClientVersion
-import org.web3j.abi.FunctionEncoder
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Type
-import org.web3j.abi.datatypes.generated.Uint8
-import org.web3j.protocol.core.JsonRpc2_0Web3j
-import org.web3j.protocol.core.methods.request.Transaction
-import org.web3j.protocol.core.methods.response.EthSendTransaction
-import org.web3j.protocol.http.HttpService
 import java.math.BigInteger
-import java.util.*
 
 
 /** *

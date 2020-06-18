@@ -1,6 +1,5 @@
 package com.example.nonoshow.ui.signIn
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,11 +11,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Switch
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
-import com.example.nonoshow.EthereumService.custLogIn
 import com.example.nonoshow.MyApplication
 import com.example.nonoshow.MyApplication.Companion.DEFAULT
 import com.example.nonoshow.MyApplication.Companion.folderName
@@ -45,12 +42,13 @@ class SignInFragment : Fragment() {
             Log.i("file","not found")
         }
         isLogined = false
-        val logoButton : ImageView = requireView().findViewById(R.id.logoImage)
-        val signIn : Button = requireView().findViewById(R.id.button_signIn)
-        val signUp : Button = requireView().findViewById(R.id.button_signUp)
-        val checkImage : ImageView = requireView().findViewById(R.id.checkImage)
-        val textID : EditText = requireView().findViewById(R.id.editText_ID)
-        val textPW : EditText = requireView().findViewById(R.id.editText_PW)
+
+        val logoButton : ImageView = getView()!!.findViewById(R.id.logoImage)
+        val signIn : Button = getView()!!.findViewById(R.id.button_signIn)
+        val signUp : Button = getView()!!.findViewById(R.id.button_signUp)
+        val checkImage : ImageView = getView()!!.findViewById(R.id.checkImage)
+        val textID : EditText = getView()!!.findViewById(R.id.editText_ID)
+        val textPW : EditText = getView()!!.findViewById(R.id.editText_PW)
         logoButton.setOnClickListener{
             val uri = Uri.parse("http://github.com/haebeompark/NonoshowAndroid")
             val intent : Intent = Intent(Intent.ACTION_VIEW, uri)
@@ -120,7 +118,6 @@ Log.i("PW",MyApplication.PW)
         state = DEFAULT
     }
 
-    @SuppressLint("SetTextI18n")
     private fun uiChange(isManager : Boolean = false){  /*false : 고객로그인모드, true : 관리자로그인모드*/
         /*visible setting*/
         if(isManager) {

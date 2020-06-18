@@ -15,16 +15,13 @@ import androidx.appcompat.widget.Toolbar
 import com.example.nonoshow.MyApplication.Companion.bookingTextView
 import com.example.nonoshow.MyApplication.Companion.createView
 import com.example.nonoshow.MyApplication.Companion.isLogined
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import kotlinx.android.synthetic.main.booking_manager.*
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.util.Log.*
 import java.util.*
 import android.widget.DatePicker
-import androidx.fragment.app.FragmentActivity
 import com.example.nonoshow.MyApplication.Companion.ID
 import com.example.nonoshow.MyApplication.Companion.ampm
 import com.example.nonoshow.MyApplication.Companion.hour

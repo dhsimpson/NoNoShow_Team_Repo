@@ -2,7 +2,6 @@ package com.example.nonoshow
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ClipData
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,23 +18,19 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.webkit.WebView
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
-import com.example.nonoshow.EthereumService.*
 import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.folderName
 import com.example.nonoshow.MyApplication.Companion.isLogined
-import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.data.FirebaseMessagingService_
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
-import java.security.Signature
 
 
 class MainActivity : AppCompatActivity() {
@@ -57,8 +52,7 @@ Log.i("set","created")
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking, R.id.nav_booking_List,R.id.nav_company_manage,R.id.nav_noshow_manager
-            ), drawerLayout
+                R.id.nav_search_by_phoneNum, R.id.nav_signIn, R.id.nav_booking, R.id.nav_booking_List,R.id.nav_company_manage,R.id.nav_noshow_manager), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
@@ -87,6 +81,7 @@ Log.i("set","created")
                 )
             }
         }
+        val currentUser = auth.currentUser
         val firebaseMessagingService_ = FirebaseMessagingService_()
         _firebaseInitSetting()
     }
@@ -192,13 +187,7 @@ Log.i("set","restart!")
                     Log.w("firebaseInit", "signInAnonymously:failure", task.exception)
                     //updateUI(null)
                 }
-
                 // ...
             }
     }
-    public override fun onStart(){
-        super.onStart()
-        val currentUser = auth.currentUser
-    }
-
 }
