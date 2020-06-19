@@ -243,15 +243,15 @@ class BookingMainFragment : Fragment() ,OnMapReadyCallback{
         }
     }
     override fun onResume() {
+        super.onResume()
         if(mapView != null)
             mapView.onResume()
-        super.onResume()
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         if(mapView != null)/*life cycle 때문에 */
             mapView.onDestroy()
-        super.onDestroy()
     }
 
 }

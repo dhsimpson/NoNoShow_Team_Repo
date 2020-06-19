@@ -271,6 +271,7 @@ class NoShowManagerFragment : Fragment(){
                     result = false
                 }
                 else if(rDate == cDate){
+                    Log.i("rDate - cDate", "" + (rDate - cDate))
                     if(rTime+delay < cTime){
                         state = stateEnum.show  //수정가능하며 default는 show.
                         result = true
