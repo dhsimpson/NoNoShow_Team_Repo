@@ -30,6 +30,7 @@ import java.io.IOException
 
 class MyApplication : Application() { /*하나의 인스턴스를 가지는 클래스*/
     companion object {
+        var ec2Address : String? = null
         var folderName : String? = null
         var mDBReference : DatabaseReference?  = null
         var childUpdates : HashMap<String, Object>?  = null

@@ -41,7 +41,7 @@ class NoShowManagerFragment : Fragment(){
             if (managerMode)/*매니저 서비스*/
                 tryLookShowNoShowList(managerInfo!!.name)
             else /*고객 서비스*/{
-                //TODO("관리자가 아닙니다.")
+                //TODO(관리자가 아닙니다.)
             }
 
         }

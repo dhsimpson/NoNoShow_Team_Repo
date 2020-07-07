@@ -1,9 +1,11 @@
 package com.example.nonoshow.ui.signIn
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.example.nonoshow.MyApplication
 import com.example.nonoshow.MyApplication.Companion.DEFAULT
+import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.folderName
 import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.MyApplication.Companion.managerMode
@@ -24,12 +27,20 @@ import com.example.nonoshow.MyApplication.Companion.trySignIn
 import com.example.nonoshow.MyApplication.Companion.trySignInManager
 import com.example.nonoshow.R
 import com.example.nonoshow.data.translate
+import com.example.nonoshow.ec2Connection
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileNotFoundException
+import okhttp3.MultipartBody
+import okhttp3.Request
+import okhttp3.RequestBody
+import org.json.JSONObject
+import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
+
+import okhttp3.*
 
 class SignInFragment : Fragment() {
     var isChecked = false
@@ -129,6 +140,14 @@ Log.i("PW",MyApplication.PW)
             button_signIn.text = "로그인"
         }
     }
+
+    private fun getStringFromBitmap(bitmapPicture : Bitmap) : String  {
+        val byteArrayBitmapStream = ByteArrayOutputStream()
+        bitmapPicture.compress(Bitmap.CompressFormat.PNG, 100, byteArrayBitmapStream)
+
+        return Base64.encodeToString(byteArrayBitmapStream.toByteArray(), Base64.DEFAULT)
+    }
+
     private fun signIn(id : String, pw : String, it : View?){
         if(isChecked) { /*로그인 상태유지가 클릭된 경우*/
             val filePath = File("$folderName/data")
@@ -156,7 +175,15 @@ Log.i("PW",MyApplication.PW)
         }
         when(managerMode){
             true->{
-                trySignInManager(id,pw,it)
+                //trySignInManager(id,pw,it) /***firebase***/
+
+                val jsonParam = JSONObject()
+                jsonParam.put("id", id) //json 파라미터 전송을 위해 담기
+                jsonParam.put("pw", pw)
+                val url = MyApplication.ec2Address
+                GlobalScope.launch(Dispatchers.IO) {
+                    ec2Connection.httpcall("$url/user/compLogin",jsonParam)
+                }
             }
             false->{
                 trySignIn(id,pw,it)

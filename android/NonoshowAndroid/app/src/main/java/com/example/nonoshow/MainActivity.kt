@@ -26,6 +26,7 @@ import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.folderName
 import com.example.nonoshow.MyApplication.Companion.isLogined
 import com.example.nonoshow.data.FirebaseMessagingService_
+import com.example.nonoshow.ui.signIn.SignInFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
@@ -59,8 +60,8 @@ Log.i("set","created")
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         contextForList = this
-        val webView : WebView = WebView(contextForList)
-        webView.apply{loadUrl("textContract.func3()")}
+        /*val webView : WebView = WebView(contextForList)
+        webView.apply{loadUrl("textContract.func3()")}*/
         getHashKey()
         Thread {
             //getCredential()
@@ -84,6 +85,7 @@ Log.i("set","created")
             }
         }
         val firebaseMessagingService_ = FirebaseMessagingService_()
+        MyApplication.ec2Address = this.resources.getString(R.string.ec2Address)
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
