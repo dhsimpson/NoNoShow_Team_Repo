@@ -30,6 +30,7 @@ import java.io.IOException
 
 class MyApplication : Application() { /*하나의 인스턴스를 가지는 클래스*/
     companion object {
+        var ec2Address : String? = null
         var folderName : String? = null
         var mDBReference : DatabaseReference?  = null
         var childUpdates : HashMap<String, Object>?  = null
@@ -512,7 +513,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                     }
                 }
                 else{
-                    TODO("관리자 유저가 예약을 취소시켰을 경우에 키를가지고 노쇼블록에서 삭제해야함.")
+                    //("관리자 유저가 예약을 취소시켰을 경우에 키를가지고 노쇼블록에서 삭제해야함.")
                 }
                 tryGetToken(request.userID!!,request,isModify = true)
                 cotext.refresh()
