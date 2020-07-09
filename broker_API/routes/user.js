@@ -11,6 +11,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider(url));
 const test_contract = new web3.eth.Contract(abi,contractAddress);
 const privatekey = config.privateKey
 const privateKey = Buffer.from(privatekey,"hex");
+const func = require('../functions.js');
 
 web3.eth.accounts.privateKeyToAccount(privateKey);
 
@@ -33,7 +34,7 @@ const router = express.Router();
 router.post('/custSignUp',async function(req,res){
   const body = req.body;
   await func.custSignUp(wallet, body.phoneNumber,body.name,body.id,body.pw,body.birth);
-  await func.subCUstSignIn(res);
+  await func.subCustSignUp(res);
 });
 
 router.post('/custLogIn',async function(req,res){
@@ -45,7 +46,7 @@ router.post('/custLogIn',async function(req,res){
 router.post('/compSignUp',async function(req,res){
   const body = req.body;
   await func.compSignUp(wallet, body.name, body.startTime, body.id, body.pw, body.address, body.phoneNumber,body.img,body.description);
-  await func.subCUstSignIn(res);
+  await func.subCompSignUp(res);
 });
 
 router.post('/compLogIn',async function(req,res){

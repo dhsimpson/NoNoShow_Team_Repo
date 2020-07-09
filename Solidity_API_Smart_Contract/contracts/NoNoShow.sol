@@ -13,6 +13,7 @@ contract NoNoShow{
     uint32 date; // 20201414같이
     uint32 time; // 1130같이
     uint32 personnel; // 예약인원수
+    uint32 bookState; // 0 확인안됨, 1 예약승인, 2 예약거절
     bool isShow; // 노쇼면false 쇼면true
   }
 
@@ -118,13 +119,14 @@ contract NoNoShow{
     }
     emit checkBookListEvent(creator, compID, resBooks);
   }
-  function ackBook(bytes32 compID,bytes32 keyID,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time,uint32 personnel, bool ack) public{
+  function ackBook(bytes32 compID,bytes32 keyID,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time,uint32 personnel,uint32 bookState, bool ack) public{
     if(ack){
-      LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel, false));
-      compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel, false));
+      LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,bookState, false));
+      compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,bookState, false));
     }
     emit alertToCustEvent(creator, keyID, ack);
   }
+  // 쇼업, 노쇼 결과 처리
   function resBook(bytes32 keyID,bytes32 compID, uint32 date, bool isShow) public{ // 고객이 예약시간에 왔는지 안왔는지 확인
     for(uint32 i = uint32(LedgerDB[keyID].length - 1);i>=0;i--){
         if(LedgerDB[keyID][i].date == date){
@@ -139,13 +141,30 @@ contract NoNoShow{
         }
     }
   }
+  // 승인 대기 예약 상태 바꾸기
+  function waitBook(bytes32 keyID,bytes32 compID, uint32 date, uint32 bookState) public{ // 고객이 예약시간에 왔는지 안왔는지 확인
+    for(uint32 i = uint32(LedgerDB[keyID].length - 1);i>=0;i--){
+        if(LedgerDB[keyID][i].date == date){
+            LedgerDB[keyID][i].bookState = bookState;
+            break;
+        }
+    }
+    for(uint32 i = uint32(compBooks[compID].length - 1);i>=0;i--){
+        if(compBooks[compID][i].date == date){
+            compBooks[compID][i].bookState = bookState;
+            break;
+        }
+    }
+  }
 
-  function callBook(bytes32 compID,string memory phoneNumber,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time, uint32 personnel) public {//전화 예약에 대해 업체가 예약 넣는것
+  // 전화 예약 승인
+  function callBook(bytes32 compID,string memory phoneNumber,string memory compName,string memory custName, string memory custPN, uint32 date,uint32 time, uint32 personnel,uint32 bookState) public {//전화 예약에 대해 업체가 예약 넣는것
     bytes32 keyID = userCust[phoneNumber].keyID;
-    LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,false));
-    compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,false));
+    LedgerDB[keyID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,bookState,false));
+    compBooks[compID].push(books(compID,keyID,compName,custName,custPN,date,time,personnel,bookState,false));
     emit alertToCustEvent(creator, keyID, true);
   }
+
   // 업체 회원 공통
   function checkUser(string memory phoneNumber,string memory callerPN ,uint32 idx) public { // 고객의 최근 노쇼 기록을 확인
     delete resBooks;

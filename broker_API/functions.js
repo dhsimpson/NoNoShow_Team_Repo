@@ -141,7 +141,7 @@ module.exports.compBookList = async function(wallet, compID, date){
 module.exports.subCompBookList = async function(res, compID){
  try{
    const block = await web3.eth.getBlockNumber();
-   test_contract.events.compSignUpEvent({fromBlock:block, toBlock: 'latest'},async function(err,event){
+   test_contract.events.checkBookListEvent({fromBlock:block, toBlock: 'latest'},async function(err,event){
      if(err){res.send("예약 내역을 불러올 수 없습니다.");}
      else if(event.returnValues[1]==compID){ res.send(event.returnValues); }
      else{res.send("예약 내역을 불러올 수 없습니다.");} // 이벤트 중에 해당 업체의 예약 내역만 고르는 방법은 없을까? => 2학기때 연구해보자.
@@ -168,6 +168,30 @@ module.exports.compResBook = async function(wallet, keyID, compID, date, isShow)
       to: contractAddress,
       from: wallet,
       data: test_contract.methods.resBook(keyID, compID, date, isShow).encodeABI()
+    };
+    var tx = new Tx(txData,{'chain':'ropsten'});
+    tx.sign(privateKey);
+    var serialTx = tx.serialize();
+    var res = await web3.eth.sendSignedTransaction(`0x${serialTx.toString('hex')}`);
+  }catch(e){
+    console.log(e);
+  }
+ // await process.exit(0);
+}
+
+// 승인 대기 예약을 승인, 거부
+module.exports.compResBook = async function(wallet, keyID, compID, date, bookState){
+  try{
+    const block = await web3.eth.getBlockNumber();
+    var txCount = await web3.eth.getTransactionCount(wallet,block);
+    console.log(txCount);
+    const txData = {
+      nonce: txCount,//'0x10'
+      gasLimit: web3.utils.toHex(3000000),
+      gasPrice: web3.utils.toHex(3000000),
+      to: contractAddress,
+      from: wallet,
+      data: test_contract.methods.waitBook(keyID, compID, date, bookState).encodeABI()
     };
     var tx = new Tx(txData,{'chain':'ropsten'});
     tx.sign(privateKey);
