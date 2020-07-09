@@ -152,6 +152,41 @@ module.exports.subCompBookList = async function(res, compID){
 }
 
 // 업체가 예약결정 하면 회원에게 결과 알람 해주기
+module.exports.ackBook = async function(wallet, compID, keyID, compName, custName, custPN, date, time, personnel, bookState, ack){
+  try{
+    const block = await web3.eth.getBlockNumber();
+    var txCount = await web3.eth.getTransactionCount(wallet,block);
+    console.log(txCount);
+    const txData = {
+      nonce: txCount,//'0x10'
+      gasLimit: web3.utils.toHex(3000000),
+      gasPrice: web3.utils.toHex(3000000),
+      to: contractAddress,
+      from: wallet,
+      data: test_contract.methods.ackBook(compID, keyID, compName, custName, custPN, date, time, personnel, bookState, ack).encodeABI()
+    };
+    var tx = new Tx(txData,{'chain':'ropsten'});
+    tx.sign(privateKey);
+    var serialTx = tx.serialize();
+    var res = await web3.eth.sendSignedTransaction(`0x${serialTx.toString('hex')}`);
+  }catch(e){
+    console.log(e);
+  }
+ // await process.exit(0);
+}
+// 나중에
+module.exports.subAckBook = async function(res, callerPN){
+ try{
+   const block = await web3.eth.getBlockNumber();
+   test_contract.events.checkNoShowListEvent({fromBlock:block, toBlock: 'latest'},async function(err,event){
+     if(err){console.log(err);}
+     else if(event.returnValues[1]==callerPN){res.send(event.returnValues);}
+     else {res.send("없는 전화번호 입니다.");} // 여러 event 중에 callerPN 만 고르는 방법은 없을까? => 2학기때 연구해 보자.
+   });
+ }catch(e){
+   console.log(e);
+ }
+}
 
 // 전화 예약에 대해 예약결정 하면 회원에게 결과 알람 해주기
 
@@ -180,7 +215,7 @@ module.exports.compResBook = async function(wallet, keyID, compID, date, isShow)
 }
 
 // 승인 대기 예약을 승인, 거부
-module.exports.compResBook = async function(wallet, keyID, compID, date, bookState){
+module.exports.waitBook = async function(wallet, keyID, compID, date, bookState){
   try{
     const block = await web3.eth.getBlockNumber();
     var txCount = await web3.eth.getTransactionCount(wallet,block);

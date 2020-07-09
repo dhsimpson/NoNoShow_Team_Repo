@@ -112,9 +112,9 @@ contract NoNoShow{
   ////업체의 예약 관련 함수
   function bookList(bytes32 compID,uint32 date) public { // 업체 ID와 날짜로 그날의 예약 리스트 뽑아오기
     delete resBooks;
-    for(uint32 i = uint32(compBooks[compID].length-1);i>=0;i--){
-        if(compBooks[compID][i].date == date){
-            resBooks.push(compBooks[compID][i]);
+    for(int32 i = int32(compBooks[compID].length-1);i>=0;i--){
+        if(compBooks[compID][uint32(i)].date == date){
+            resBooks.push(compBooks[compID][uint32(i)]);
         }
     }
     emit checkBookListEvent(creator, compID, resBooks);
@@ -128,30 +128,30 @@ contract NoNoShow{
   }
   // 쇼업, 노쇼 결과 처리
   function resBook(bytes32 keyID,bytes32 compID, uint32 date, bool isShow) public{ // 고객이 예약시간에 왔는지 안왔는지 확인
-    for(uint32 i = uint32(LedgerDB[keyID].length - 1);i>=0;i--){
-        if(LedgerDB[keyID][i].date == date){
-            LedgerDB[keyID][i].isShow = isShow;
+    for(int32 i = int32(LedgerDB[keyID].length - 1);i>=0;i--){
+        if(LedgerDB[keyID][uint32(i)].date == date){
+            LedgerDB[keyID][uint32(i)].isShow = isShow;
             break;
         }
     }
-    for(uint32 i = uint32(compBooks[compID].length - 1);i>=0;i--){
-        if(compBooks[compID][i].date == date){
-            compBooks[compID][i].isShow = isShow;
+    for(int32 i = int32(compBooks[compID].length - 1);i>=0;i--){
+        if(compBooks[compID][uint32(i)].date == date){
+            compBooks[compID][uint32(i)].isShow = isShow;
             break;
         }
     }
   }
   // 승인 대기 예약 상태 바꾸기
   function waitBook(bytes32 keyID,bytes32 compID, uint32 date, uint32 bookState) public{ // 고객이 예약시간에 왔는지 안왔는지 확인
-    for(uint32 i = uint32(LedgerDB[keyID].length - 1);i>=0;i--){
-        if(LedgerDB[keyID][i].date == date){
-            LedgerDB[keyID][i].bookState = bookState;
+    for(int32 i = int32(LedgerDB[keyID].length - 1);i>=0;i--){
+        if(LedgerDB[keyID][uint32(i)].date == date){
+            LedgerDB[keyID][uint32(i)].bookState = bookState;
             break;
         }
     }
-    for(uint32 i = uint32(compBooks[compID].length - 1);i>=0;i--){
-        if(compBooks[compID][i].date == date){
-            compBooks[compID][i].bookState = bookState;
+    for(int32 i = int32(compBooks[compID].length - 1);i>=0;i--){
+        if(compBooks[compID][uint32(i)].date == date){
+            compBooks[compID][uint32(i)].bookState = bookState;
             break;
         }
     }
@@ -166,12 +166,13 @@ contract NoNoShow{
   }
 
   // 업체 회원 공통
-  function checkUser(string memory phoneNumber,string memory callerPN ,uint32 idx) public { // 고객의 최근 노쇼 기록을 확인
+  function checkUser(string memory phoneNumber,string memory callerPN ,int32 idx) public { // 고객의 최근 노쇼 기록을 확인
     delete resBooks;
-    uint32 bookLength = uint32(LedgerDB[userCust[userID_finder[phoneNumber]].keyID].length);
+    int32 bookLength = int32(LedgerDB[userCust[userID_finder[phoneNumber]].keyID].length);
     bytes32 keyID = userCust[userID_finder[phoneNumber]].keyID;
-    for(uint32 i = bookLength - 1;i>bookLength-1-idx || i>=0;i--){
-        resBooks.push(LedgerDB[keyID][i]);
+    for(int32 i =int32(bookLength - 1);i>bookLength-1-idx;i--){
+        if(i<0){break;}
+        resBooks.push(LedgerDB[keyID][uint32(i)]);
     }
     emit checkNoShowListEvent(creator,callerPN,resBooks);
   }

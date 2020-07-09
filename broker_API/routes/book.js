@@ -25,10 +25,16 @@ const router = express.Router();
 // 업체의 예약 리스트 가져오기
 router.post('/compBookList',async function(req,res){
   const body = req.body;
-  await func.compBookList(wallet, body.compID,body.date);
-  await func.subCompBookList(res, compID);
+  await func.compBookList(wallet, body.compID, body.date);
+  await func.subCompBookList(res, body.compID);
 });
 // 업체가 예약결정 하면 회원에게 결과 알람 해주기
+router.post('/ackBook',async function(req,res){
+  const body = req.body;
+  await func.ackBook(wallet, body.compID, body.keyID, body.compName, body.custName, body.custPN, body.date, body.time, body.personnel, body.bookState, body.ack);
+  res.send("예약 결정");
+  // await func.subAckBook(res, body.compID);
+});
 
 // 전화 예약에 대해 예약결정 하면 회원에게 결과 알람 해주기
 
