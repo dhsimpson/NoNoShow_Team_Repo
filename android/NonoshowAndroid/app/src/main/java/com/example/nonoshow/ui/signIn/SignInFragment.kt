@@ -16,18 +16,19 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
-import com.example.nonoshow.MyApplication
+import androidx.navigation.fragment.findNavController
+import com.example.nonoshow.*
 import com.example.nonoshow.MyApplication.Companion.DEFAULT
+import com.example.nonoshow.MyApplication.Companion.LOGINED
 import com.example.nonoshow.MyApplication.Companion.contextForList
 import com.example.nonoshow.MyApplication.Companion.folderName
 import com.example.nonoshow.MyApplication.Companion.isLogined
+import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.MyApplication.Companion.state
 import com.example.nonoshow.MyApplication.Companion.trySignIn
 import com.example.nonoshow.MyApplication.Companion.trySignInManager
-import com.example.nonoshow.R
 import com.example.nonoshow.data.translate
-import com.example.nonoshow.ec2Connection
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -182,7 +183,8 @@ Log.i("PW",MyApplication.PW)
                 jsonParam.put("pw", pw)
                 val url = MyApplication.ec2Address
                 GlobalScope.launch(Dispatchers.IO) {
-                    ec2Connection.httpcall("$url/user/compLogin",jsonParam)
+                    val result = JSONObject(ec2Connection.httpcall("$url/user/compLogin",jsonParam))
+                    onSignInResponse(result, id)
                 }
             }
             false->{
@@ -193,11 +195,54 @@ Log.i("PW",MyApplication.PW)
                 jsonParam.put("pw", pw)
                 val url = MyApplication.ec2Address
                 GlobalScope.launch(Dispatchers.IO) {
-                    ec2Connection.httpcall("$url/user/custLogin",jsonParam)
+                    val result = JSONObject(ec2Connection.httpcall("$url/user/custLogIn",jsonParam))
+                    onSignInResponse(result, id)
                 }
             }
         }
     }
+
+    private fun onSignInResponse(result : JSONObject,id : String){
+        val success : Boolean = result.getBoolean("2"/*is signIn Success*/)
+        Log.e("success",success.toString())
+        if(success){
+            GlobalScope.launch(Dispatchers.Main){
+                if(managerMode){
+                    onSignInSuccess(id,result.getString("compID"))
+                }
+                else{
+                    onSignInSuccess(id,result.getString("keyID"))
+                }
+
+            }
+        }
+        else{
+            GlobalScope.launch(Dispatchers.Main){
+                onSignInFail()
+            }
+        }
+    }
+
+    private fun onSignInSuccess(ID: String,keyID : String){/** ec2와 통신이후 성공했다면,*/
+        MainActivity.changeState(ID, LOGINED)/*로그인 성공시 상태를 변경하며, 닉네임설정*/
+        isLogined = true
+        state = LOGINED
+        MyApplication.ID = ID
+        MyApplication.keyID = keyID
+        if(managerMode){
+            managerInfo = ManagerInfo(ID, "notAllowed", "nameDefault", "addressDefault","phoneNumDefault")
+            Log.e("SignIn","관리자 모드")
+        }
+        Log.e("SignIn","로그인 성공")
+        this.findNavController().navigate(R.id.nav_booking)    /*fragment 전환*/
+    }
+
+    private fun onSignInFail(){
+        isLogined = false
+        //TODO(아이디 패스워드 오류)
+        Log.e("SignIn","로그인 실패")
+    }
+
     private fun initSetting(){
         val file = File("$folderName/data/forLogin.txt")
         val file_a = File("$folderName/data/forLoginAuto.txt")

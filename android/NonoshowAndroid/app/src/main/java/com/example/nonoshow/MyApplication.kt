@@ -46,6 +46,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
         var minute : Int = 0
         var numberOfPerson : Int = 1
         var userName : String = "UNKNOWN"
+        var keyID : String = ""
         const val LINEAR_LAYOUT = 1004
         const val TEXT_VIEW = 1015
         const val IMAGE_BUTTON = 1026
@@ -285,7 +286,6 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
 
             return result
         }
-
 
         fun trySignInManager(id : String ="",pw : String="",it : View?){ /*이더리움으로 부터 "client"->상태 고객 고유 ID와 true값을 받아 고유ID를 반환함*/
             FirebaseDatabase.getInstance().reference.child("Manager_info").addChildEventListener(object:ChildEventListener{

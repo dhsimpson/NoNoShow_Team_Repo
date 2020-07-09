@@ -138,11 +138,9 @@ class ec2Connection {
             connection.disconnect()
             return result
         }
-
-        fun httpcall(urlString : String, jsonParam : JSONObject){
+        fun httpcall(urlString : String, jsonParam : JSONObject) : String{
             val url = URL(urlString)
             val connection = url.openConnection() as HttpURLConnection
-            Log.i("url", url.toString())
             connection.useCaches = false // 캐시 사용 안 함
             connection.requestMethod = "POST" //전송방식
             connection.doOutput = true       //데이터를 쓸 지 설정
@@ -186,12 +184,13 @@ class ec2Connection {
 
                     }*/
             result = page
-            Log.e("result",result) //받아온 결과를 글로벌 변수에 저장해 다른 Activity 에서 사용하도록 함.
+            Log.e("result",result)
 
             Log.i("STATUS", connection.responseCode.toString())
             Log.i("MSG", connection.responseMessage)
             // 200인경우 정상 403 permission error 404 not found 413 type error
             connection.disconnect()
+            return result
         }
     }
 }
