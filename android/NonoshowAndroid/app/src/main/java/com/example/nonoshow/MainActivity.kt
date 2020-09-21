@@ -30,6 +30,10 @@ import com.example.nonoshow.ui.signIn.SignInFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -63,11 +67,18 @@ Log.i("set","created")
         /*val webView : WebView = WebView(contextForList)
         webView.apply{loadUrl("textContract.func3()")}*/
         getHashKey()
+        val url = "http://211.172.20.217:25565/predict"
         Thread {
-            //getCredential()
-            //getBalance()
-            //custSignUp("test","11","22",88888888,"01015156464")   /*이더리움 연결*/
-            //custLogIn("blackcow","12345678")
+            val start = System.currentTimeMillis()
+            val noshowModel : NoshowModel = NoshowModel()
+            val gender = 1
+            val age = 25
+            val scheduledDay_DOW = 5
+            val sms_received = 1
+            val data = noshowModel.noshowPredict(url, gender, age, scheduledDay_DOW, sms_received)
+            val end = System.currentTimeMillis() //프로그램이 끝나는 시점 계산
+            Log.i("predict result : ", data)
+            Log.i("걸린시간", ""+(end - start) /1000.0 + "초")
         }.start()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(

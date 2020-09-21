@@ -176,20 +176,20 @@ Log.i("PW",MyApplication.PW)
         }
         when(managerMode){
             true->{
-                //trySignInManager(id,pw,it) /***firebase***/
+                trySignInManager(id,pw,it) /***firebase***/
 
-                val jsonParam = JSONObject()
+                /*val jsonParam = JSONObject()
                 jsonParam.put("id", id) //json 파라미터 전송을 위해 담기
                 jsonParam.put("pw", pw)
                 val url = MyApplication.ec2Address
                 GlobalScope.launch(Dispatchers.IO) {
                     val result = JSONObject(ec2Connection.httpcall("$url/user/compLogin",jsonParam))
                     onSignInResponse(result, id)
-                }
+                }*/
             }
             false->{
-                //trySignIn(id,pw,it) /***firebase***/
-
+                trySignIn(id,pw,it) /***firebase***/
+/*
                 val jsonParam = JSONObject()
                 jsonParam.put("id", id) //json 파라미터 전송을 위해 담기
                 jsonParam.put("pw", pw)
@@ -197,7 +197,7 @@ Log.i("PW",MyApplication.PW)
                 GlobalScope.launch(Dispatchers.IO) {
                     val result = JSONObject(ec2Connection.httpcall("$url/user/custLogIn",jsonParam))
                     onSignInResponse(result, id)
-                }
+                }*/
             }
         }
     }

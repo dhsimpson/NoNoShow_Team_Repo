@@ -78,8 +78,7 @@ class modify_comp : AppCompatActivity() {
                 managerInfo.id,
                 compAddress.text.toString(),
                 compInfo.text.toString(),
-                imageButton
-                ,
+                imageButton,
                 position!!
             )
             //uploadImageS3(filePath)
