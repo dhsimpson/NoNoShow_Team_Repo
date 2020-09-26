@@ -603,7 +603,48 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                         }
                     }
                     if(request != null){
-                        BookingListFragment.createABlock(request = request)
+                        run {
+                            /*이더리움으로 부터 "client"->상태 고객 고유 ID와 true값을 받아 고유ID를 반환함*/
+                            var userInfo: UserInfo? = null
+                            FirebaseDatabase.getInstance().reference.child("User_info")
+                                .addChildEventListener(object : ChildEventListener {
+                                    override fun onChildAdded(
+                                        dataSnapshot: DataSnapshot,
+                                        p1: String?
+                                    ) {
+                                        Log.e(
+                                            "trySignIn",
+                                            "key=" + dataSnapshot.key + ", " + dataSnapshot.value + ", s=" + p1
+                                        )
+                                        if (request!!.userID == dataSnapshot.key) {
+                                            userInfo = UserInfo(
+                                                request!!.userID,
+                                                "****",
+                                                dataSnapshot.child("name").value.toString(),
+                                                dataSnapshot.child("age").value.toString(),
+                                                dataSnapshot.child("phoneNum").value.toString()
+                                            )
+                                            BookingListFragment.createABlock(request!!, userInfo!!)
+                                        }
+                                    }
+
+                                    override fun onCancelled(p0: DatabaseError) {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+
+                                    override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+
+                                    override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+
+                                    override fun onChildRemoved(p0: DataSnapshot) {
+                                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                                    }
+                                })
+                        }
                     }
 
                 }
@@ -623,7 +664,6 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             })
-            Thread.sleep(800)
             val result = arrayList
             arrayList.clear()
             return result

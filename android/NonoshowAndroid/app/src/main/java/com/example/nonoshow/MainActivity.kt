@@ -67,19 +67,19 @@ Log.i("set","created")
         /*val webView : WebView = WebView(contextForList)
         webView.apply{loadUrl("textContract.func3()")}*/
         getHashKey()
-        val url = "http://211.172.20.217:25565/predict"
-        Thread {
-            val start = System.currentTimeMillis()
-            val noshowModel : NoshowModel = NoshowModel()
-            val gender = 1
-            val age = 25
-            val scheduledDay_DOW = 5
-            val sms_received = 1
-            val data = noshowModel.noshowPredict(url, gender, age, scheduledDay_DOW, sms_received)
-            val end = System.currentTimeMillis() //프로그램이 끝나는 시점 계산
-            Log.i("predict result : ", data)
-            Log.i("걸린시간", ""+(end - start) /1000.0 + "초")
-        }.start()
+//        val url = "http://211.172.20.217:25565/predict"
+//        Thread {
+//            val start = System.currentTimeMillis()
+//            val noshowModel : NoshowModel = NoshowModel()
+//            val gender = 1
+//            val age = 25
+//            val scheduledDay_DOW = 5
+//            val sms_received = 1
+//            val data = noshowModel.noshowPredict(url, gender, age, scheduledDay_DOW, sms_received)
+//            val end = System.currentTimeMillis() //프로그램이 끝나는 시점 계산
+//            Log.i("predict result : ", data)
+//            Log.i("걸린시간", ""+(end - start) /1000.0 + "초")
+//        }.start()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(
                     Manifest.permission.ACCESS_COARSE_LOCATION

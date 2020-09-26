@@ -23,7 +23,9 @@ import com.example.nonoshow.MyApplication.Companion.managerInfo
 import com.example.nonoshow.MyApplication.Companion.managerMode
 import com.example.nonoshow.MyApplication.Companion.modifyBooking
 import com.example.nonoshow.MyApplication.Companion.tryLookReservation
+import com.example.nonoshow.NoshowModel
 import com.example.nonoshow.ReservationRequest
+import com.example.nonoshow.UserInfo
 import kotlin.random.Random
 
 class BookingListFragment : Fragment() {
@@ -73,7 +75,7 @@ class BookingListFragment : Fragment() {
         var instance : BookingListFragment? = null
         var LL : LinearLayout? = null
         var requestlist : ArrayList<ReservationRequest>? = ArrayList()
-        fun createABlock(request : ReservationRequest) {
+        fun createABlock(request : ReservationRequest, userInfo : UserInfo) {
             var err = false
             for (req in requestlist!!){
                 if(req.phoneNum == request.phoneNum && req.date == request.date && req.time == request.time){
@@ -154,7 +156,8 @@ class BookingListFragment : Fragment() {
                 else {
                     var color: Int = R.color.colorWhite
                     var text: String = "대기중"
-                    val randomValue = Random.nextInt(0, 100)
+
+                    val predict = getShowPredict(0,userInfo.age.toInt(),request.date,0)
                     val buttonGroup: LinearLayout? = createView(
                         type = LINEAR_LAYOUT,
                         width = ViewGroup.LayoutParams.MATCH_PARENT,
@@ -263,7 +266,7 @@ class BookingListFragment : Fragment() {
                     )
                     val textViewSub: TextView? = createView(
                         type = TEXT_VIEW,
-                        text = "예약날짜 : " + request.date + "\n예약시간 : " + request.time + "\n 상태 : $text \n 신뢰도 : $randomValue%", /* 날짜 등 */
+                        text = "예약날짜 : " + request.date + "\n예약시간 : " + request.time + "\n 상태 : $text \n 신뢰도 : $predict%", /* 날짜 등 */
                         textColor = R.color.colorGray140,
                         textSize = 16f,
                         width = ViewGroup.LayoutParams.MATCH_PARENT,
@@ -319,6 +322,22 @@ class BookingListFragment : Fragment() {
                     LL!!.addView(block)
                 }   /*관리자 유저*/
             }
+        }
+        private fun getShowPredict(gender : Int = 1, age : Int = 25, date : String, sms_received : Int = 1) : Double{
+            val url = "http://211.172.20.217:25565/predict"
+            var result = 50.0
+            val temp = Thread {
+                val start = System.currentTimeMillis()
+                val noshowModel : NoshowModel = NoshowModel()
+                val data = noshowModel.noshowPredict(url, gender, age, date, sms_received)
+                val end = System.currentTimeMillis() //프로그램이 끝나는 시점 계산
+                Log.i("predict result : ", data)
+                Log.i("걸린시간", ""+(end - start) /1000.0 + "초")
+                result = data.toDouble()
+            }
+            temp.start()
+            temp.join()
+            return result
         }
     }
 
