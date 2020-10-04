@@ -17,52 +17,80 @@ import java.util.Calendar;
 import java.text.SimpleDateFormat;
 
 public class NoshowModel {
+    String result = "err";
+    String urls_;
+    int gender_;
+    int age_;
+    String date_;
+    int sms_received_;
     /***
      * 만들어진 모듈을 불러와서 머신러닝 예측을 실행 하기 위한 클래스
      * 어플리케이션 내부에 저장된 모듈을 불러오게 된다 - 업데이트를 통해 교체가능
      * json 이된 모델로부터 가중치벡터, 상수항을 가져와 예측하도록 한다.
      */
-    public String noshowPredict(String urls, int gender, int age, String date, int sms_received) {
-        String title="err";
-        int scheduledDay_DOW = getDayOfWeek(date);
-        try {
-            OkHttpClient client = new OkHttpClient();
+   Thread flaskThread = new Thread(new Runnable(){
+        @Override
+        public void run() {
+            boolean failed = true;
+            while(failed){
+                try {
+                    int scheduledDay_DOW = getDayOfWeek(date_);
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .retryOnConnectionFailure(true)
+                            .build();
 
-            JSONObject jsonInput = new JSONObject();
-            jsonInput.put("gender", String.valueOf(gender));
-            jsonInput.put("age", String.valueOf(age));
-            jsonInput.put("scheduledDay_DOW", String.valueOf(scheduledDay_DOW));
-            jsonInput.put("sms_received", String.valueOf(sms_received));
-            Log.i("test", jsonInput.toString());
+                    JSONObject jsonInput = new JSONObject();
+                    jsonInput.put("gender", String.valueOf(gender_));
+                    jsonInput.put("age", String.valueOf(age_));
+                    jsonInput.put("scheduledDay_DOW", String.valueOf(scheduledDay_DOW));
+                    jsonInput.put("sms_received", String.valueOf(sms_received_));
+                    Log.i("test", jsonInput.toString());
 
-            RequestBody reqBody = RequestBody.create(
-                    MediaType.parse("application/json; charset=utf-8"),
-                    jsonInput.toString()
-            );
+                    RequestBody reqBody = RequestBody.create(
+                            MediaType.parse("application/json; charset=utf-8"),
+                            jsonInput.toString()
+                    );
 
-            Request request = new Request.Builder()
-                    .post(reqBody)
-                    .url(urls)
-                    .build();
+                    Request request = new Request.Builder()
+                            .addHeader("Connection","close")
+                            .addHeader("content-type", "application/json")
+                            .post(reqBody)
+                            .url(urls_)
+                            .build();
+                    Response responses = client.newCall(request).execute();
+                    String message = "no message";
+                    if (responses.body() != null) {
+                        message = responses.body().string();
+                    }
+                    Log.i("res",message);
 
-            Response responses = null;
-            responses = client.newCall(request).execute();
+                    JSONObject jObject = new JSONObject(message);
+                    result = jObject.getString("predict");
 
-            String message = responses.body().string();
-            JSONObject jObject = new JSONObject(message);
-            title = jObject.getString("predict");
-
-            System.out.println("" + message);
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+                    System.out.println("" + message);
+                    failed = false;
+                    responses.close();
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                    failed = true;
+                }
+            }
         }
 
-        return title;
+    });
+    public String noshowPredict(String urls, int gender, int age, String date, int sms_received) {
+        urls_ = urls;
+        gender_ = gender;
+        age_ = age;
+        date_ = date;
+        sms_received_ = sms_received;
+        flaskThread.start();
+        try {
+            flaskThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
     public int getDayOfWeek(String date){
         String[] strArray = date.split(" ");

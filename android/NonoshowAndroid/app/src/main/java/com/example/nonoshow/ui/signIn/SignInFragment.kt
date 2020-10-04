@@ -189,8 +189,8 @@ Log.i("PW",MyApplication.PW)
             }
             false->{
                 trySignIn(id,pw,it) /***firebase***/
-/*
-                val jsonParam = JSONObject()
+
+                /*val jsonParam = JSONObject()
                 jsonParam.put("id", id) //json 파라미터 전송을 위해 담기
                 jsonParam.put("pw", pw)
                 val url = MyApplication.ec2Address

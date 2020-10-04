@@ -389,7 +389,7 @@ class MyApplication : Application() { /*하나의 인스턴스를 가지는 클�
                     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             })
-            Thread.sleep(800)
+            //Thread.sleep(800)
             val result = arrayList
             arrayList.clear()
             return result
