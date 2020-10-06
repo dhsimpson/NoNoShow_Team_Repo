@@ -1,6 +1,7 @@
 package com.example.nonoshow.ui.signUp
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType.TYPE_CLASS_NUMBER
 import android.text.InputType.TYPE_CLASS_TEXT
@@ -23,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.time.LocalDate
 import java.util.*
 
 class SignUpFragment : Fragment() { /*회원가입*/
@@ -102,9 +104,9 @@ class SignUpFragment : Fragment() { /*회원가입*/
                               ageOrAddress : String, isManager : Boolean){
         when(isManager){
             true->{
-                Thread{trySignUpManager(phoneNumber,name,id,ageOrAddress,pw)}.start() /***firebase***/
-                /*** ec2
-                 jsonParam.put("name", name) //json 파라미터 전송을 위해 담기
+                //Thread{trySignUpManager(phoneNumber,name,id,ageOrAddress,pw)}.start() /***firebase***/
+                val jsonParam = JSONObject()
+                jsonParam.put("name", name) //json 파라미터 전송을 위해 담기
                 jsonParam.put("startTime", System.currentTimeMillis())
                 jsonParam.put("id",id)
                 jsonParam.put("pw",pw)
@@ -112,20 +114,34 @@ class SignUpFragment : Fragment() { /*회원가입*/
                 jsonParam.put("phoneNumber",phoneNumber)
                 jsonParam.put("img","none")
                 jsonParam.put("description","none")
-                val jsonParam = JSONObject()
                 val url = MyApplication.ec2Address
                 GlobalScope.launch(Dispatchers.IO) {
                     ec2Connection.httpcall("$url/user/compSignUp",jsonParam)
-                }***/
+                }
             }
             false->{
-                Log.i("ageOrAddress.toInt()",""+ageOrAddress)
-                Log.i("name",name)
-                Log.i("id",id)
-                Log.i("pw",pw)
-                Log.i("phone",phoneNumber)
-                Thread{trySignUp(phoneNumber,name,id,ageOrAddress,pw)}.start()
-                //Thread{custSignUp(name, id, pw, ageOrAddress.toInt(),phoneNumber)}.start()
+                //Thread{trySignUp(phoneNumber,name,id,ageOrAddress,pw)}.start()/***firebase***/
+                val jsonParam = JSONObject()
+                jsonParam.put("phoneNumber",phoneNumber)
+                jsonParam.put("name", name) //json 파라미터 전송을 위해 담기
+                jsonParam.put("id",id)
+                jsonParam.put("pw",pw)
+                val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    LocalDate.now()
+                } else {
+                    TODO("VERSION.SDK_INT < O")
+                }
+                val birth : Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    now.plusYears(-ageOrAddress.toLong()).year
+                } else {
+                    TODO("VERSION.SDK_INT < O")
+                }
+                jsonParam.put("birth",birth)
+
+                val url = MyApplication.ec2Address
+                GlobalScope.launch(Dispatchers.IO) {
+                    ec2Connection.httpcall("$url/user/custSignUp",jsonParam)
+                }
             }
         }
     }
