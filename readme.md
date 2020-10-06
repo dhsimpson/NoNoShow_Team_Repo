@@ -1,4 +1,4 @@
-### NoNoShow 종합설계프로젝트
+# NoNoShow 종합설계프로젝트
 
 ## Solidity_API_Smart_Contract 
 - 스마트 컨트랙트 배포 파일(Truffle 프레임워크 이용해 컴파일,테스팅,이더리움 네트워크에 배포)
