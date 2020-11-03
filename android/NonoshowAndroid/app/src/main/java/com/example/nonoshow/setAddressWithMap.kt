@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.Window
+import android.widget.TextView
+import android.widget.Button
+import com.example.nonoshow.data.GeocodeUtil
 import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory.newLatLng
 import com.google.android.gms.maps.GoogleMap
@@ -28,6 +31,20 @@ class setAddressWithMap : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnM
         textViewConfirm.setOnClickListener{
             confirmMap()
         }
+        val button = findViewById<Button>(R.id.geocoderButton)
+        button.setOnClickListener{
+            val address = findViewById<TextView>(R.id.adressGeocoder).text.toString()
+            val geocodeUtil = GeocodeUtil(MyApplication.contextForList)
+            val results = geocodeUtil.getGeoLocationListUsingAddress(address)
+            val first : GeocodeUtil.GeoLocation = results[0]
+            val position = LatLng(first.lat, first.lng)
+            this.mMap!!.moveCamera(newLatLng(position))
+            val mOptions: MarkerOptions = MarkerOptions()
+            mOptions.position(position)
+            modify_comp.position = position
+            // 마커(핀) 추가
+            selected = mMap!!.addMarker(mOptions) // 마커추가,화면에출력
+        }
     }
     override fun onTouchEvent(event : MotionEvent) : Boolean{
         //바깥레이어 클릭시 안닫히게
@@ -47,6 +64,7 @@ class setAddressWithMap : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnM
 
     override fun onMapReady(p0: GoogleMap?) {
         var mMap = p0
+        this.mMap = mMap
         mMap!!.uiSettings.isMyLocationButtonEnabled = true
         mMap.isMyLocationEnabled = true
 

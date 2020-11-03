@@ -7,6 +7,7 @@
     tools:context=".map"
     android:orientation="vertical"
     android:background="@android:color/transparent">
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mapFragment"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -17,7 +18,32 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".map" />
+        tools:context=".map">
+
+    </androidx.fragment.app.FragmentContainerView>
+
+    <EditText
+        android:id="@+id/adressGeocoder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/common_google_signin_btn_icon_dark_normal_background"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Adress"
+        app:layout_constraintStart_toStartOf="@+id/mapFragment"
+        app:layout_constraintTop_toTopOf="@+id/mapFragment" />
+
+    <Button
+        android:id="@+id/geocoderButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="18dp"
+        android:text="search"
+        app:layout_constraintStart_toEndOf="@+id/adressGeocoder"
+        app:layout_constraintTop_toTopOf="@+id/mapFragment" />
 
     <TextView
         android:id="@+id/textView8"
