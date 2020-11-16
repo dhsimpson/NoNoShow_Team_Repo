@@ -95,6 +95,10 @@ public class NoshowModel {
     public int getDayOfWeek(String date){
         String[] strArray = date.split(" ");
         String year = strArray[0].split("년")[0];
+        if(strArray.length < 3){
+            Log.i("errorGet",strArray.length+"");
+            Log.i("errorGet",""+strArray[0]);
+        }
         String month = strArray[1].split("월")[0];
         String day = strArray[2].split("일")[0];
         month = String.valueOf(Integer.valueOf(month) - 1);

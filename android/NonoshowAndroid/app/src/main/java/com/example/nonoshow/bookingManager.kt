@@ -269,26 +269,30 @@ class bookingManager : AppCompatActivity() {
             height = 300
     ).apply {
       this!!.setOnClickListener {
-          var time = ""
-          time = if(ampm == "am") {
-              "오전 "+hour+"시"+minute+"분"
-          } else{
-              "오후 "+hour+"시"+minute+"분"
+          if(dateString == "default"){
+              //날짜 선택이 안된 경우.
           }
-        when (isLogined) {
-          true -> {/*이미 로그인 되었을 경우*/
-            //("핸드폰번호, userID, 날짜, 시간, 예약인원,매장이름 으로 데이타를 생성 -> DB에 삽입하기 [MyApplication의 함수를 call]")
-              tryBooking(MyApplication.userPhoneNum!!,ID,dateString,time,numberOfPerson.toString())
-              finishActivity()
+          else{
+              var time = ""
+              time = if(ampm == "am") {
+                  "오전 "+hour+"시"+minute+"분"
+              } else{
+                  "오후 "+hour+"시"+minute+"분"
+              }
+              when (isLogined) {
+                  true -> {/*이미 로그인 되었을 경우*/
+                      //("핸드폰번호, userID, 날짜, 시간, 예약인원,매장이름 으로 데이타를 생성 -> DB에 삽입하기 [MyApplication의 함수를 call]")
+                      tryBooking(MyApplication.userPhoneNum!!,ID,dateString,time,numberOfPerson.toString())
+                      finishActivity()
+                  }
+                  false -> {    /*비로그인상태일경우 - 매커니즘상 실행 안됨*/
+                      bookingTextView = this
+                      val intent = Intent(context, unLoginBookingPopupActivity::class.java)
+                      startActivity(intent)
+                      //("핸드폰번호, userID=name(임시), 날짜, 시간, 예약인원 으로 데이타를 생성 -> DB에 삽입하기")
+                  }
+              }
           }
-          false -> {    /*비로그인상태일경우 - 매커니즘상 실행 안됨*/
-            bookingTextView = this
-            val intent = Intent(context, unLoginBookingPopupActivity::class.java)
-            startActivity(intent)
-              //("핸드폰번호, userID=name(임시), 날짜, 시간, 예약인원 으로 데이타를 생성 -> DB에 삽입하기")
-          }
-        }
-
       }
     })
   }

@@ -3,6 +3,8 @@ package com.example.nonoshow.data;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,7 @@ public class GeocodeUtil {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.i("error","get Geo-failed");
         }
 
         return resultList;

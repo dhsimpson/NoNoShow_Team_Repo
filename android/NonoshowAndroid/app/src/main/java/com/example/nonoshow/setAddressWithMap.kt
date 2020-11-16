@@ -36,14 +36,19 @@ class setAddressWithMap : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnM
             val address = findViewById<TextView>(R.id.adressGeocoder).text.toString()
             val geocodeUtil = GeocodeUtil(MyApplication.contextForList)
             val results = geocodeUtil.getGeoLocationListUsingAddress(address)
-            val first : GeocodeUtil.GeoLocation = results[0]
-            val position = LatLng(first.lat, first.lng)
-            this.mMap!!.moveCamera(newLatLng(position))
-            val mOptions: MarkerOptions = MarkerOptions()
-            mOptions.position(position)
-            modify_comp.position = position
-            // 마커(핀) 추가
-            selected = mMap!!.addMarker(mOptions) // 마커추가,화면에출력
+            if(results.size < 1){
+                //검색어를 찾을 수 없음.
+            }
+            else {
+                val first: GeocodeUtil.GeoLocation = results[0]
+                val position = LatLng(first.lat, first.lng)
+                this.mMap!!.moveCamera(newLatLng(position))
+                val mOptions: MarkerOptions = MarkerOptions()
+                mOptions.position(position)
+                modify_comp.position = position
+                // 마커(핀) 추가
+                selected = mMap!!.addMarker(mOptions) // 마커추가,화면에출력
+            }
         }
     }
     override fun onTouchEvent(event : MotionEvent) : Boolean{

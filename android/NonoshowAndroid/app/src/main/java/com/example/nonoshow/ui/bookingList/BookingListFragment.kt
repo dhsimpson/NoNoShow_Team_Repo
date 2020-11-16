@@ -253,7 +253,7 @@ class BookingListFragment : Fragment() {
                         type = LINEAR_LAYOUT,
                         directionHorizontal = true, /*가로*/
                         width = ViewGroup.LayoutParams.MATCH_PARENT,
-                        height = 600,
+                        height = 800,
                         backGroundColor = color
                     )
                     val textView: TextView? = createView(
@@ -266,7 +266,7 @@ class BookingListFragment : Fragment() {
                     )
                     val textViewSub: TextView? = createView(
                         type = TEXT_VIEW,
-                        text = "예약날짜 : " + request.date + "\n예약시간 : " + request.time + "\n 상태 : $text \n 신뢰도 : $predict%", /* 날짜 등 */
+                        text = "예약날짜 : " + request.date + "\n예약시간 : " + request.time + "\n 상태 : $text \n 신뢰도 : $predict%" + "\n 인원 : " + request.numberOfPerson + "명", /* 날짜 등 */
                         textColor = R.color.colorGray140,
                         textSize = 16f,
                         width = ViewGroup.LayoutParams.MATCH_PARENT,
